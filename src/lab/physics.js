@@ -37,11 +37,11 @@ export function createPhysics(partIds, groups, onHit) {
     world.addBody(b)
   }
   fixed(30, 1, 30, 0, FLOOR_Y - 1, 0) // desk
-  fixed(2.0, 1.5, 1.35, -3.7, 1.62, -2.0, 0.3) // television (matches TV_POS / TV_ROT in CRTScreen.jsx)
+  fixed(2.0, 1.5, 1.35, -4.3, 1.62, -3.9, 0.3) // television (matches TV_POS / TV_ROT in CRTScreen.jsx)
   fixed(1.0, 0.13, 0.75, 3.2, 0.15, 0.7, -0.35) // cartridge lying on the desk
   // invisible walls keep the pile inside the picture
   fixed(0.5, 6, 8, -6.2, 6, 2); fixed(0.5, 6, 8, 6.2, 6, 2)
-  fixed(8, 6, 0.5, 0, 6, 5.6); fixed(8, 6, 0.5, 0, 6, -1.1)
+  fixed(8, 6, 0.5, 0, 6, 5.6); fixed(8, 6, 0.5, 0, 6, -2.5) // back wall: well behind the console (its rear edge is at z = -1.5)
 
   const parts = partIds.map((id, i) => {
     const def = COLLIDERS[id]

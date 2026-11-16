@@ -7,7 +7,7 @@ import { drawGame, GAME_H, GAME_W } from './pixelQuest.js'
 import { coverTexture } from './textures.js'
 
 // Where the television stands (also used by the physics colliders).
-export const TV_POS = [-3.7, 0, -2.0]
+export const TV_POS = [-4.3, 0, -3.9]
 export const TV_ROT = 0.3
 
 const vertexShader = /* glsl */ `
@@ -166,7 +166,7 @@ export default function CRTScreen({ screenRef, groupRef }) {
       </group>
 
       {/* game box, leaning beside the TV */}
-      <group position={[1.9, 1.06, -2.6]} rotation={[-0.09, -0.3, 0]}>
+      <group position={[2.3, 1.06, -3.6]} rotation={[-0.09, -0.3, 0]}>
         <mesh material={[res.boxSide, res.boxEdge, res.boxSide, res.boxSide, res.boxFront, res.boxSide]}>
           <boxGeometry args={[1.5, 2.1, 0.32]} />
         </mesh>

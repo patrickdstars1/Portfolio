@@ -37,8 +37,8 @@ export function explodedOffset(i, out) {
 // clear of the heading. (The canvas itself must not be offset: that breaks
 // pointer hit-testing for the site shown on the TV.)
 const VIEWS = {
-  assembled: { pos: [-0.9, 4.2, 10.6], tgt: [-1.5, 2.2, -0.9], wide: 0.6 },
-  pile: { pos: [0.4, 10.4, 14.9], tgt: [0, 0, 1.6], wide: 0.92 },
+  assembled: { pos: [-1.0, 4.2, 11.8], tgt: [-1.7, 2.0, -1.6], wide: 0.82 },
+  pile: { pos: [0.4, 10.4, 13.9], tgt: [0, 0, 0.6], wide: 0.92 },
   exploded: { pos: [7.2, 4.5, 13.2], tgt: [0, 3.8, 0], wide: 0.95 },
 }
 export function layoutCamera(layout, aspect, pos, tgt) {
