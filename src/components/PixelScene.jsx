@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTheme } from '../hooks/useTheme.jsx'
 import { Parallax } from './Parallax.jsx'
-import { castleSprite, groundTile, orbSprite, ridgeTile, skyTile, slimeSprite, TILE, treeSprite } from '../lib/pixelScene.js'
+import { bushSprite, castleSprite, flowerSprite, groundTile, lampSprite, orbSprite, ridgeTile, signSprite, skyTile, slimeSprite, TILE, treeSprite } from '../lib/pixelScene.js'
+import Critters from './Critters.jsx'
 import Mascot from './Mascot.jsx'
 
 export function usePixelScale() {
@@ -63,6 +64,10 @@ export default function PixelScene({ variant = 'hero' }) {
     orb: orbSprite(theme),
     tree: treeSprite(theme),
     slime: slimeSprite(),
+    sign: signSprite(),
+    bush: bushSprite(theme),
+    lamp: lampSprite(theme),
+    flowers: [0, 1, 2].map(flowerSprite),
   }), [theme])
   const G = 40 * S // ground height
   const hero = variant === 'hero'
@@ -77,7 +82,7 @@ export default function PixelScene({ variant = 'hero' }) {
             <div className="h-full w-full" style={{ ...tile(art.sky, S, 160), backgroundPosition: 'left top', '--tile': `${TILE * S}px`, animation: theme === 'light' ? 'drift 90s linear infinite' : undefined }} />
           </Parallax>
           {theme === 'dark' && <ShootingStars px={S} />}
-          <Parallax speed={0.45} className="absolute right-[16%] top-[14%] hidden sm:block">
+          <Parallax speed={0.45} className="absolute right-[12%] top-[16%] sm:right-[16%]">
             <img src={art.orb} alt="" width={28 * S} height={28 * S} className="pixelated block" />
           </Parallax>
         </>
@@ -96,8 +101,22 @@ export default function PixelScene({ variant = 'hero' }) {
       </Parallax>
       {/* ground moves with the page */}
       <div className="absolute inset-x-0 bottom-0" style={{ height: G, backgroundImage: `url(${art.ground})`, backgroundSize: `${32 * S}px ${40 * S}px`, backgroundRepeat: 'repeat-x' }} />
-      <img src={art.slime} alt="" width={10 * S} height={8 * S} className="pixelated absolute left-[62%] block" style={{ bottom: G - S, animation: 'bob 0.9s steps(2) infinite' }} />
+      {hero ? (
+        <>
+          {/* props standing on the ground */}
+          <img src={art.sign.url} alt="" width={art.sign.w * S} height={art.sign.h * S} className="pixelated absolute left-[14%] block sm:left-[20%]" style={{ bottom: G - S }} />
+          <img src={art.lamp.url} alt="" width={art.lamp.w * S} height={art.lamp.h * S} className="pixelated absolute left-[52%] hidden sm:block" style={{ bottom: G - S }} />
+          <img src={art.bush.url} alt="" width={art.bush.w * S} height={art.bush.h * S} className="pixelated absolute left-[2%] block" style={{ bottom: G - S }} />
+          <img src={art.bush.url} alt="" width={art.bush.w * S} height={art.bush.h * S} className="pixelated absolute left-[74%] block" style={{ bottom: G - S }} />
+          {[8, 33, 45, 67, 88].map((left, i) => (
+            <img key={left} src={art.flowers[i % 3].url} alt="" width={3 * S} height={6 * S} className="pixelated absolute block" style={{ left: `${left}%`, bottom: G - S }} />
+          ))}
+        </>
+      ) : (
+        <img src={art.slime} alt="" width={10 * S} height={8 * S} className="pixelated absolute left-[62%] block" style={{ bottom: G - S, animation: 'bob 0.9s steps(2) infinite' }} />
+      )}
     </div>
+    {hero && <Critters scale={S} ground={G} />}
     {/* the mascot sits above the page content so it can be clicked */}
     <Mascot scale={S} bottom={G - S} start={hero ? 0.12 : 0.3} />
     </>

@@ -24,6 +24,9 @@ export const translations = {
       ctaResume: 'Download resume',
       available: 'Available for opportunities',
       scroll: 'Scroll',
+      hint: 'Move your pointer. Click things.',
+      hintTouch: 'Tap things.',
+      coins: 'Coins',
     },
     about: {
       title: 'About',
@@ -177,6 +180,9 @@ export const translations = {
       ctaResume: 'ดาวน์โหลด Resume',
       available: 'พร้อมรับโอกาสใหม่',
       scroll: 'เลื่อนลง',
+      hint: 'ขยับ pointer แล้วลองกดดูสิ',
+      hintTouch: 'ลองแตะดูสิ',
+      coins: 'เหรียญ',
     },
     about: {
       title: 'เกี่ยวกับผม',

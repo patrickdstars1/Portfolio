@@ -1,7 +1,7 @@
 // Procedural pixel-art scenery for the parallax layers. Everything is drawn at
 // 1:1 pixels into small canvases, exported as data URLs and scaled up with
 // `image-rendering: pixelated`. Tiles are 256px wide and repeat seamlessly.
-import { rng } from './pixel.js'
+import { drawText, rng, textWidth } from './pixel.js'
 
 export const TILE = 256
 
@@ -169,4 +169,65 @@ export function iconSprite(kind, theme) {
   if (kind === 'code' && theme === 'light') { col.sky = '#0A6EA8'; col.orange = '#B4551A' }
   ICONS[kind]((x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(x, y, w, h) }, col)
   return c.toDataURL()
+}
+
+// ---- extra scenery and characters for the hero playground --------------------
+const paint = (rows, pal, w = rows[0].length, h = rows.length) => {
+  const [c, ctx] = make(w, h)
+  rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const col = pal[row[x]]; if (col) { ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1) } } })
+  return { url: c.toDataURL(), w, h }
+}
+
+// Wooden signpost with the site name.
+export function signSprite() {
+  const text = 'BANK.DEV'
+  const w = textWidth(text) + 10
+  const [c, ctx] = make(w, 30)
+  ctx.fillStyle = '#4E2D18'; ctx.fillRect(Math.floor(w / 2) - 2, 14, 4, 16)
+  ctx.fillStyle = '#4E2D18'; ctx.fillRect(0, 0, w, 15)
+  ctx.fillStyle = '#B9764A'; ctx.fillRect(1, 1, w - 2, 13)
+  ctx.fillStyle = '#D29562'; ctx.fillRect(1, 1, w - 2, 2)
+  drawText(ctx, text, 5, 4, { color: '#2A1608' })
+  return { url: c.toDataURL(), w, h: 30 }
+}
+
+export function bushSprite(theme) {
+  const [a, b] = theme === 'dark' ? ['#1B4D3A', '#2B7A45'] : ['#379A51', '#6FD486']
+  return paint(['....aaaa......aaa...', '..aaabbaaa..aabbaa..', '.aabbbbbaaaaabbbbaa.', 'aabbbbbbbaabbbbbbbaa', 'aaaaaaaaaaaaaaaaaaaa'], { a, b })
+}
+
+export function flowerSprite(i = 0) {
+  const petal = ['#FF7A8A', '#FFD84D', '#F4F7FC'][i % 3]
+  return paint(['.p.', 'pyp', '.p.', '.g.', '.g.', 'gg.'], { p: petal, y: '#FFB02E', g: '#2B7A45' })
+}
+
+// Street lamp. The lit head only shows at night.
+export function lampSprite(theme) {
+  const lit = theme === 'dark'
+  return paint(['.kkkkk.', 'kyyyyyk', 'kyyyyyk', '.kkkkk.', '...k...', '...k...', '...k...', '...k...', '...k...', '...k...', '...k...', '...k...', '...k...', '..kkk..'],
+    { k: theme === 'dark' ? '#0D0C2A' : '#2B4467', y: lit ? '#FFE08A' : '#C9D6E6' })
+}
+
+// "?" block and the coin it gives.
+export function blockSprite() {
+  return paint(['kkkkkkkkkkkk', 'koooooooooyk', 'koookkkkooyk', 'kookooookoyk', 'koooooookoyk', 'kooooookooyk', 'koooookoooyk', 'kooooooooodk', 'koooookooodk', 'kooooooooodk', 'kyddddddddDk', 'kkkkkkkkkkkk'],
+    { k: '#4E2D18', o: '#FFB47A', y: '#FFD9B8', d: '#E08A4E', D: '#B4551A' })
+}
+export function coinSprite() {
+  return paint(['..oooo..', '.oyyyyo.', 'oyywyyyo', 'oyywyyyo', 'oyywyyyo', 'oyyyyyyo', '.oyyyyo.', '..oooo..'], { o: '#B4551A', y: '#FFD84D', w: '#FFF3B0' })
+}
+
+// Flying critter, two wing frames side by side: a bat at night, a bird by day.
+export function flyerSheet(theme) {
+  const night = theme === 'dark'
+  const pal = night ? { b: '#C9B8FF', d: '#8E78D9', e: '#10131A', o: '#FFB47A' } : { b: '#FFFFFF', d: '#C9D6E6', e: '#10131A', o: '#FFB02E' }
+  const up = night
+    ? ['b......bb......b', 'bb....bbbb....bb', 'bbb..bbebbeb.bbb', '.bbbbbbbbbbbbbb.', '..dbbbbbbbbbbd..', '....dbbbbbbd....', '......d..d......', '................']
+    : ['.bb.........bb..', '.bbb.......bbb..', '..bbbb...bbbb...', '...bbbbbbbbeboo.', '....dbbbbbbbb...', '.....dddddd.....', '................', '................']
+  const down = night
+    ? ['................', '......bb..bb....', '....bbbebbebb...', '.bbbbbbbbbbbbbb.', 'bbbdbbbbbbbbdbbb', 'bb..dbbbbbbd..bb', 'b.....d..d.....b', '................']
+    : ['................', '................', '....bbbbbbbbeboo', '..bbbbbbbbbbb...', '.bbbdbbbbbbd....', '.bb..dddddd.....', '.b..............', '................']
+  const [c, ctx] = make(32, 8)
+  ;[up, down].forEach((rows, f) => rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const col = pal[row[x]]; if (col) { ctx.fillStyle = col; ctx.fillRect(f * 16 + x, y, 1, 1) } } }))
+  return { url: c.toDataURL(), w: 16, h: 8 }
 }
