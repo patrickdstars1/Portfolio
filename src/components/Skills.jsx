@@ -7,7 +7,7 @@ import TechIcon from './TechIcon.jsx'
 export default function Skills() {
   const { t, pick } = useLanguage()
   return (
-    <Section id="skills" level="02" title={t.skills.title} subtitle={t.skills.subtitle} className="bg-bg-2" deco={<><Deco kind="block" speed={0.3} className="right-[4%] top-28" /><Deco kind="star" speed={-0.2} bob className="left-[3%] bottom-24" /></>}>
+    <Section id="skills" level="02" title={t.skills.title} subtitle={t.skills.subtitle} className="bg-bg-2" deco={<><Deco kind="chip" speed={0.3} tilt={-6} className="right-[2.5%] top-28" /><Deco kind="terminal" speed={-0.2} tilt={5} delay={0.8} className="left-[2%] top-[55%]" /></>}>
       <div className="divide-y-2 divide-dashed divide-line border-y-2 border-dashed border-line">
         {skillGroups.map((g, gi) => (
           <Reveal key={g.id} delay={gi * 50} className="grid gap-4 py-6 md:grid-cols-[14rem_1fr] md:gap-8">
@@ -16,7 +16,7 @@ export default function Skills() {
               {g.items.map((item) => (
                 <li
                   key={item.name}
-                  className="inline-flex items-center gap-2.5 border-2 border-line bg-card px-3.5 py-2 text-sm shadow-[3px_3px_0_0_var(--shadow)] transition-transform duration-100 hover:-translate-y-0.5 hover:text-sky"
+                  className="chip inline-flex items-center gap-2.5 border-2 border-line bg-card px-3.5 py-2 text-sm shadow-[3px_3px_0_0_var(--shadow)] transition-transform duration-100 hover:-translate-y-0.5 hover:text-sky"
                 >
                   <TechIcon name={item.icon} />
                   {item.name}

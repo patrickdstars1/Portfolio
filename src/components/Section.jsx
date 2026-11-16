@@ -21,7 +21,7 @@ export function PixelRule({ className = '' }) {
 /** `level` is the stage number shown above the title, e.g. "01". `deco` renders floating parallax sprites. */
 export default function Section({ id, level, title, subtitle, children, className = '', deco = null }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={`relative overflow-x-clip border-t-4 border-line py-20 md:py-28 ${className}`}>
+    <section id={id} aria-labelledby={`${id}-title`} className={`relative overflow-clip border-t-4 border-line py-20 md:py-28 ${className}`}>
       {deco}
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal className="mb-10 max-w-2xl md:mb-14">

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { registerParallax } from '../lib/parallax.js'
-import { decoSprite } from '../lib/pixelScene.js'
+import { iconSprite } from '../lib/pixelScene.js'
 import { useTheme } from '../hooks/useTheme.jsx'
 
 // Wraps children in a layer that scrolls at a different speed from the page.
@@ -16,13 +16,19 @@ export function Parallax({ speed = 0.2, className = '', style, children }) {
   )
 }
 
-// Floating pixel decoration (coin, heart, star, block, cloud) with its own parallax speed.
-export function Deco({ kind, scale = 4, speed = 0.3, className = '', bob = false }) {
+// Item box beside a section: a pixel icon in a framed tile that floats and
+// drifts at its own parallax speed. Icons: chip, floppy, cartridge, gamepad,
+// mail, chat, briefcase, terminal, code, heart.
+export function Deco({ kind, speed = 0.25, className = '', delay = 0, tilt = 0 }) {
   const { theme } = useTheme()
-  const s = useMemo(() => decoSprite(kind, theme), [kind, theme])
+  const url = useMemo(() => iconSprite(kind, theme), [kind, theme])
   return (
     <Parallax speed={speed} className={`pointer-events-none absolute hidden xl:block ${className}`}>
-      <img src={s.url} alt="" width={s.w * scale} height={s.h * scale} className="pixelated block" style={bob ? { animation: 'bob 2.4s steps(4) infinite' } : undefined} />
+      <div style={{ transform: `rotate(${tilt}deg)` }}>
+        <div className="item-box grid h-[76px] w-[76px] place-items-center border-[3px] border-line bg-card shadow-[5px_5px_0_0_var(--shadow)]" style={{ animationDelay: `${delay}s` }}>
+          <img src={url} alt="" width={48} height={48} className="pixelated block" />
+        </div>
+      </div>
     </Parallax>
   )
 }

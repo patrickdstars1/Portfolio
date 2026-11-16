@@ -35,7 +35,7 @@ export default function About() {
     [A.info.interests, pick(profile.interests).join(', ')],
   ]
   return (
-    <Section id="about" level="01" title={A.title} deco={<><Deco kind="cloud" scale={5} speed={0.35} className="right-[3%] top-24" /><Deco kind="coin" speed={-0.25} bob className="left-[2.5%] top-[55%]" /></>}>
+    <Section id="about" level="01" title={A.title} deco={<><Deco kind="chat" speed={0.3} tilt={6} className="right-[2.5%] top-24" /><Deco kind="code" speed={-0.2} tilt={-6} delay={1.2} className="left-[2%] top-[58%]" /></>}>
       <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-16">
         <Reveal className="space-y-5 text-lg text-pretty">
           {A.intro.map((p, i) => (

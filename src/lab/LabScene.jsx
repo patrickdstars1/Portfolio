@@ -7,7 +7,8 @@ import * as THREE from 'three'
 import RetroConsole from './RetroConsole.jsx'
 import GameCartridge, { poseCartridge } from './GameCartridge.jsx'
 import CRTScreen from './CRTScreen.jsx'
-import { buildSimpleKeys, focusCamera, PART_IDS, partOffset, powerAt, sampleCamera } from './ExplodedView.js'
+import { bounceOut, easeInOutCubic, easeOutBack, easeOutCubic, explodedOffset, focusCamera, layoutCamera, PART_IDS, pilePose } from './ExplodedView.js'
+import { sfx } from '../lib/sound.js'
 import { shadowTexture } from './textures.js'
 
 const BG = '#05070c'
@@ -39,8 +40,7 @@ function Rig({ sim, onPower }) {
   const shadow = useRef()
   const consoleState = useRef({ btn: 0, led: 0 })
   const screen = useRef({ mode: 'off', bootT: 0, time: 0, glitch: 0, brightness: 0, collapse: 1 })
-  const base = useRef(null)
-  const keys = useMemo(() => buildSimpleKeys(size.width / size.height), [size.width, size.height])
+  const anim = useRef(null) // per-part animation state, created once the meshes exist
   const v = useMemo(() => ({ off: new THREE.Vector3(), pos: new THREE.Vector3(), tgt: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3(), look: new THREE.Vector3(), cur: null }), [])
   const pointer = useRef({ x: 0, y: 0 })
   const shadowTex = useMemo(() => shadowTexture(), [])
@@ -52,42 +52,91 @@ function Rig({ sim, onPower }) {
     return () => window.removeEventListener('pointermove', on)
   }, [])
 
+  // Start a move of every part from wherever it is now to the pose for `layout`.
+  const startLayout = (a, layout, now) => {
+    a.layout = layout
+    const fast = sim.reduced ? 0.2 : 1
+    a.items.forEach((it, i) => {
+      it.fromPos.copy(it.group.position); it.fromQuat.copy(it.group.quaternion)
+      if (layout === 'pile') {
+        pilePose(i, it.seated, it.toPos, it.toQuat)
+        it.mode = 'burst'; it.delay = (i % 4) * 0.03 * fast; it.dur = (0.75 + (i % 3) * 0.12) * fast
+        it.pop = 1.6 + (i % 5) * 0.45 // how high it is thrown before it falls
+      } else if (layout === 'exploded') {
+        it.toPos.copy(it.seated).add(explodedOffset(i, v.off)); it.toQuat.identity()
+        it.mode = 'smooth'; it.delay = i * 0.05 * fast; it.dur = 0.6 * fast
+      } else {
+        it.toPos.copy(it.seated); it.toQuat.identity()
+        // reverse order: bottom casing first, top casing last
+        it.mode = 'snap'; it.delay = (a.items.length - 1 - i) * 0.045 * fast; it.dur = 0.36 * fast
+      }
+      it.t0 = now; it.done = false
+    })
+    if (layout === 'pile') sfx.crash()
+  }
+
   useFrame((state, dtRaw) => {
     const dt = Math.min(dtRaw, 0.05)
-    const p = sim.powered ? sim.p : 0
-    const time = state.clock.elapsedTime
+    const now = state.clock.elapsedTime
 
-    // --- electrical state: scripted intro until powered, then derived from scroll
-    let st
-    if (sim.powered) st = powerAt(p, time)
-    else {
-      const i = sim.intro
-      st = { on: i.btn > 0.5, led: i.led, brightness: i.brightness, collapse: i.collapse, mode: i.mode, bootT: i.bootT, frozen: false, glitch: 0, cart: i.cart, away: 0 }
-    }
+    // --- electrical state is animated by LabStage; just read it
+    const e = sim.elec
     const cs = consoleState.current
-    cs.btn += ((st.on ? 1 : 0) - cs.btn) * Math.min(1, dt * 18)
-    cs.led = st.led
+    cs.btn += (e.btn - cs.btn) * Math.min(1, dt * 18)
+    cs.led = e.led
     const sc = screen.current
-    if (!st.frozen && st.mode === 'title') sc.time += dt
-    sc.mode = st.mode; sc.bootT = st.bootT; sc.glitch = st.glitch
-    sc.brightness = st.brightness; sc.collapse = st.collapse
+    if (e.mode === 'title' && e.glitch === 0) sc.time += dt
+    sc.mode = e.mode; sc.bootT = e.bootT; sc.glitch = e.glitch
+    sc.brightness = e.brightness; sc.collapse = e.collapse
 
-    // --- parts: remember seated positions once, then offset from them
-    if (!base.current && parts.current.topCase) {
-      base.current = PART_IDS.map((id) => parts.current[id].position.clone())
+    // --- parts
+    if (!anim.current && parts.current.topCase) {
+      anim.current = {
+        layout: 'assembled',
+        items: PART_IDS.map((id) => {
+          const group = parts.current[id]
+          return { group, seated: group.position.clone(), fromPos: new THREE.Vector3(), toPos: new THREE.Vector3(), fromQuat: new THREE.Quaternion(), toQuat: new THREE.Quaternion(), done: true }
+        }),
+      }
     }
-    if (base.current) {
-      PART_IDS.forEach((id, i) => {
-        parts.current[id].position.copy(base.current[i]).add(partOffset(i, p, v.off))
+    const a = anim.current
+    if (a) {
+      if (a.layout !== sim.layout) startLayout(a, sim.layout, now)
+      let finished = 0
+      a.items.forEach((it, i) => {
+        if (it.done) { finished++; return }
+        const k = Math.min(1, Math.max(0, (now - it.t0 - it.delay) / it.dur))
+        const g = it.group
+        if (it.mode === 'burst') {
+          // thrown outwards, falls, bounces on the desk
+          const h = easeOutCubic(k)
+          g.position.x = it.fromPos.x + (it.toPos.x - it.fromPos.x) * h
+          g.position.z = it.fromPos.z + (it.toPos.z - it.fromPos.z) * h
+          g.position.y = it.fromPos.y + (it.toPos.y - it.fromPos.y) * bounceOut(k) + it.pop * Math.sin(Math.PI * Math.min(1, k * 2.4)) * (1 - k)
+          g.quaternion.slerpQuaternions(it.fromQuat, it.toQuat, h)
+        } else {
+          const h = it.mode === 'snap' ? easeOutBack(k) : easeInOutCubic(k)
+          g.position.lerpVectors(it.fromPos, it.toPos, h)
+          g.quaternion.slerpQuaternions(it.fromQuat, it.toQuat, Math.min(1, easeOutCubic(k) * 1.15))
+        }
+        if (k >= 1) {
+          it.done = true
+          g.position.copy(it.toPos); g.quaternion.copy(it.toQuat)
+          if (it.mode === 'snap') (i === 0 ? sfx.lock : i % 2 ? sfx.connect : sfx.click)()
+          else if (it.mode === 'burst' ? i % 3 === 0 : i % 2 === 0) sfx.click()
+          if (i === 0 && it.mode === 'snap') sim.onAssembled?.()
+        }
       })
     }
-    poseCartridge(cart.current, st.cart, st.away)
-    if (tv.current) { tv.current.position.x = -st.away * 9; tv.current.position.z = -st.away * 3; tv.current.visible = st.away < 0.995 }
-    if (shadow.current) shadow.current.material.opacity = 0.9 - st.away * 0.5
 
-    // --- camera: close-up of the selected part, otherwise the scripted path
-    if (sim.focus >= 0) focusCamera(sim.focus, size.width / size.height, v.pos, v.tgt)
-    else sampleCamera(keys, p, v.pos, v.tgt)
+    poseCartridge(cart.current, e.cart, e.away)
+    if (tv.current) { tv.current.position.x = -e.away * 9; tv.current.position.z = -e.away * 3; tv.current.visible = e.away < 0.995 }
+    if (shadow.current) shadow.current.material.opacity = sim.layout === 'assembled' ? 0.9 : 0.35
+
+    // --- camera: close-up of the selected part, otherwise the view for this layout
+    const aspect = size.width / size.height
+    if (sim.focus >= 0 && sim.layout === 'exploded') focusCamera(sim.focus, aspect, v.pos, v.tgt)
+    else layoutCamera(sim.layout, aspect, v.pos, v.tgt)
     v.look.subVectors(v.tgt, v.pos)
     const dist = v.look.length()
     v.right.crossVectors(v.look, camera.up).normalize()
@@ -95,7 +144,7 @@ function Rig({ sim, onPower }) {
     // gentle pointer parallax
     v.pos.addScaledVector(v.right, pointer.current.x * dist * 0.025).addScaledVector(v.up, -pointer.current.y * dist * 0.018)
     if (!v.cur) v.cur = { pos: v.pos.clone(), tgt: v.tgt.clone() }
-    const k = 1 - Math.exp(-dt * 4)
+    const k = 1 - Math.exp(-dt * 4.5)
     v.cur.pos.lerp(v.pos, k); v.cur.tgt.lerp(v.tgt, k)
     camera.position.copy(v.cur.pos)
     camera.lookAt(v.cur.tgt)

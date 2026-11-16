@@ -117,7 +117,7 @@ export default function Projects() {
   const featured = projects.filter((p) => p.featured)
   const rest = projects.filter((p) => !p.featured)
   return (
-    <Section id="projects" level="04" title={t.projects.title} subtitle={t.projects.subtitle} className="bg-bg-2" deco={<><Deco kind="coin" speed={0.3} bob className="right-[3%] top-32" /><Deco kind="coin" speed={0.18} bob className="right-[6%] top-48" /><Deco kind="block" speed={-0.25} className="left-[2.5%] top-[60%]" /></>}>
+    <Section id="projects" level="04" title={t.projects.title} subtitle={t.projects.subtitle} className="bg-bg-2" deco={<><Deco kind="cartridge" speed={0.3} tilt={-5} className="right-[2.5%] top-28" /><Deco kind="code" speed={-0.2} tilt={7} delay={1} className="left-[2%] top-[60%]" /></>}>
       <div className="space-y-6">
         {featured.map((p) => <Reveal key={p.id}><Card p={p} large /></Reveal>)}
         <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

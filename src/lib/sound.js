@@ -15,6 +15,8 @@ export function onSoundChange(fn) { listeners.add(fn); return () => listeners.de
 
 function audio() {
   if (!enabled) return null
+  // Browsers block audio before the first click/tap/key press.
+  if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return null
   try {
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)()
     if (ctx.state === 'suspended') ctx.resume()
@@ -68,6 +70,10 @@ export const sfx = {
   boot() { const ac = audio(); if (!ac) return; [392, 523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(ac, { from: f, start: i * 0.09, dur: 0.12, gain: 0.05 })); tone(ac, { type: 'triangle', from: 130.81, start: 0, dur: 0.5, gain: 0.07 }) },
   // final assembly: warm resolved chord
   complete() { const ac = audio(); if (!ac) return; [261.63, 329.63, 392, 523.25].forEach((f, i) => tone(ac, { type: 'triangle', from: f, start: i * 0.05, dur: 0.6, gain: 0.05 })) },
+  // console bursting apart: a clatter of plastic and metal
+  crash() { const ac = audio(); if (!ac) return; noise(ac, { dur: 0.22, gain: 0.26, freq: 900, q: 0.6 }); for (let i = 0; i < 6; i++) noise(ac, { start: 0.05 + i * 0.07, dur: 0.04, gain: 0.14, freq: 1400 + i * 420, q: 2 }); tone(ac, { type: 'sine', from: 140, to: 50, dur: 0.2, gain: 0.12 }) },
+  // mascot chirp
+  blip() { const ac = audio(); if (!ac) return; tone(ac, { from: 660, to: 990, dur: 0.07, gain: 0.05 }); tone(ac, { from: 990, to: 1320, start: 0.07, dur: 0.09, gain: 0.05 }) },
   // Konami easter egg fanfare
   secret() { const ac = audio(); if (!ac) return; [523.25, 659.25, 783.99, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => tone(ac, { from: f, start: i * 0.075, dur: 0.1, gain: 0.05 })) },
 }

@@ -28,9 +28,9 @@ export default function Contact() {
     { key: 'github', Icon: GithubIcon, label: C.github, sub: `@${profile.githubHandle}`, href: profile.links.github },
   ]
   return (
-    <section id="contact" aria-labelledby="contact-title" className="relative overflow-x-clip border-t-4 border-line bg-bg-2 py-20 md:py-28">
-      <Deco kind="heart" speed={0.3} bob className="right-[4%] top-28" />
-      <Deco kind="star" speed={-0.2} className="left-[2.5%] top-[50%]" />
+    <section id="contact" aria-labelledby="contact-title" className="relative overflow-clip border-t-4 border-line bg-bg-2 py-20 md:py-28">
+      <Deco kind="mail" speed={0.3} tilt={-6} className="right-[2.5%] top-28" />
+      <Deco kind="heart" speed={-0.2} tilt={6} delay={1.1} className="left-[2%] top-[52%]" />
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal className="max-w-2xl">
           <p className="font-pixel text-[10px] text-orange" lang="en">STAGE 06 <span className="text-sky" style={{ animation: 'blink 1s steps(1) infinite' }}>▶</span> CONTINUE?</p>

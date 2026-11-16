@@ -1,7 +1,7 @@
 // Procedural pixel-art scenery for the parallax layers. Everything is drawn at
 // 1:1 pixels into small canvases, exported as data URLs and scaled up with
 // `image-rendering: pixelated`. Tiles are 256px wide and repeat seamlessly.
-import { drawSprite, HERO_SPRITE, rng } from './pixel.js'
+import { rng } from './pixel.js'
 
 export const TILE = 256
 
@@ -132,35 +132,41 @@ export function treeSprite(theme) {
   return c.toDataURL()
 }
 
-export function heroSprite(alt = false) {
-  const [c, ctx] = make(16, 16)
-  drawSprite(ctx, HERO_SPRITE, 0, 0, 1, alt)
-  return c.toDataURL()
-}
-
 export function slimeSprite() {
   const [c, ctx] = make(10, 8)
-  ctx.fillStyle = '#FFB47A'; ctx.fillRect(1, 2, 8, 6); ctx.fillRect(0, 4, 10, 4); ctx.fillRect(2, 1, 6, 1)
+  ctx.fillStyle = '#B98CFF'; ctx.fillRect(1, 2, 8, 6); ctx.fillRect(0, 4, 10, 4); ctx.fillRect(2, 1, 6, 1)
   ctx.fillStyle = '#10131A'; ctx.fillRect(2, 4, 2, 2); ctx.fillRect(6, 4, 2, 2)
   return c.toDataURL()
 }
 
-// Small floating decorations used between sections.
-const DECO = {
-  coin: { w: 8, h: 8, rows: ['..oooo..', '.oyyyyo.', 'oyyoyyyo', 'oyyoyyyo', 'oyyoyyyo', 'oyyoyyyo', '.oyyyyo.', '..oooo..'], pal: { o: '#B4551A', y: '#FFD84D' } },
-  heart: { w: 9, h: 8, rows: ['.rr...rr.', 'rrrr.rrrr', 'rwrrrrrrr', 'rrrrrrrrr', '.rrrrrrr.', '..rrrrr..', '...rrr...', '....r....'], pal: { r: '#E2543E', w: '#FFC9BF' } },
-  star: { w: 9, h: 9, rows: ['....s....', '....s....', '...sss...', 'sssssssss', '.sssssss.', '..sssss..', '..ss.ss..', '.ss...ss.', '.s.....s.'], pal: { s: '#75CFFF' } },
-  block: { w: 10, h: 10, rows: ['bbbbbbbbbb', 'boooooooob', 'booqqqooob', 'boqooqooob', 'boooqqooob', 'boooqoooob', 'boooooooob', 'boooqoooob', 'boooooooob', 'bbbbbbbbbb'], pal: { b: '#7A4A2A', o: '#FFB47A', q: '#10131A' } },
-  cloud: null,
+// Item icons shown beside each section (16x16, drawn with rectangles).
+const ICONS = {
+  chip: (R, c) => { R(4, 4, 8, 8, c.o); R(5, 5, 6, 6, c.sky); R(7, 7, 2, 2, c.orange); for (const i of [5, 7, 9]) { R(i, 2, 1, 2, c.o); R(i, 12, 1, 2, c.o); R(2, i, 2, 1, c.o); R(12, i, 2, 1, c.o) } },
+  floppy: (R, c) => { R(3, 2, 10, 12, c.o); R(4, 3, 8, 10, c.sky); R(6, 3, 4, 3, c.white); R(8, 3, 1, 2, c.o); R(5, 8, 6, 5, c.white); R(6, 10, 4, 1, c.orange) },
+  cartridge: (R, c) => { R(2, 2, 12, 11, c.o); R(3, 3, 10, 9, c.grey); R(4, 5, 8, 5, c.sky); R(5, 6, 6, 1, c.white); R(5, 8, 4, 1, c.orange); R(4, 13, 8, 2, c.o); R(5, 13, 6, 1, c.orange) },
+  gamepad: (R, c) => { R(1, 5, 14, 7, c.o); R(2, 6, 12, 5, c.light); R(3, 8, 3, 1, c.o); R(4, 7, 1, 3, c.o); R(11, 7, 2, 2, c.orange); R(9, 9, 2, 2, c.sky) },
+  mail: (R, c) => { R(2, 4, 12, 9, c.o); R(3, 5, 10, 7, c.white); for (let i = 0; i < 5; i++) { R(3 + i, 5 + i, 1, 1, c.o); R(12 - i, 5 + i, 1, 1, c.o) } R(7, 9, 2, 2, c.orange) },
+  chat: (R, c) => { R(2, 3, 12, 8, c.o); R(3, 4, 10, 6, c.white); R(4, 11, 3, 1, c.o); R(4, 12, 2, 1, c.o); R(4, 13, 1, 1, c.o); R(4, 6, 2, 2, c.sky); R(7, 6, 2, 2, c.orange); R(10, 6, 2, 2, c.sky) },
+  briefcase: (R, c) => { R(6, 2, 4, 1, c.o); R(5, 3, 1, 2, c.o); R(10, 3, 1, 2, c.o); R(2, 5, 12, 8, c.o); R(3, 6, 10, 6, c.orange); R(3, 8, 10, 1, c.o); R(7, 8, 2, 2, c.white) },
+  terminal: (R, c) => { R(1, 3, 14, 10, c.o); R(2, 4, 12, 8, c.dark); R(2, 4, 12, 2, c.sky); R(4, 8, 1, 1, c.white); R(5, 9, 1, 1, c.white); R(4, 10, 1, 1, c.white); R(7, 10, 3, 1, c.orange) },
+  code: (R, c) => {
+    for (const [x, y] of [[5, 4], [4, 5], [3, 6], [2, 7], [3, 8], [4, 9], [5, 10]]) { R(x, y, 2, 2, c.sky); R(14 - x, y, 2, 2, c.sky) }
+    for (const [x, y] of [[9, 3], [8, 5], [8, 7], [7, 9], [7, 11]]) R(x, y, 1, 2, c.orange)
+  },
+  heart: (R, c) => {
+    const rows = ['.oo...oo.', 'orro.orro', 'orwrorrro', 'orrrrrrro', '.orrrrro.', '..orrro..', '...oro...', '....o....']
+    rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') R(x + 3, y + 4, 1, 1, ch === 'o' ? c.o : ch === 'w' ? c.white : '#E2543E') }))
+  },
 }
-export function decoSprite(kind, theme) {
-  if (kind === 'cloud') {
-    const [c, ctx] = make(46, 14)
-    cloud(ctx, 0, 0, theme === 'dark' ? '#2A3A55' : '#FFFFFF', theme === 'dark' ? '#1C2940' : '#C9E3F6')
-    return { url: c.toDataURL(), w: 46, h: 14 }
+
+export function iconSprite(kind, theme) {
+  const [c, ctx] = make(16, 16)
+  const col = {
+    o: theme === 'dark' ? '#F4F7FC' : '#10131A', // outline
+    sky: '#75CFFF', orange: '#FFB47A', white: theme === 'dark' ? '#10131A' : '#FFFFFF',
+    grey: '#5B6676', light: '#C9CED6', dark: '#10131A',
   }
-  const d = DECO[kind]
-  const [c, ctx] = make(d.w, d.h)
-  d.rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const col = d.pal[row[x]]; if (col) { ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1) } } })
-  return { url: c.toDataURL(), w: d.w, h: d.h }
+  if (kind === 'code' && theme === 'light') { col.sky = '#0A6EA8'; col.orange = '#B4551A' }
+  ICONS[kind]((x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(x, y, w, h) }, col)
+  return c.toDataURL()
 }

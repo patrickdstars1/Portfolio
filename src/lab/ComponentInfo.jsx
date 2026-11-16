@@ -2,11 +2,11 @@ import { labComponents } from '../data/labComponents.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 
 // Information panel for the selected part.
-export default function ComponentInfo({ idx }) {
+export default function ComponentInfo({ idx, viewing }) {
   const { t, pick } = useLanguage()
   const L = t.lab
   const c = labComponents[idx]
-  if (!c) return <p className="text-sm text-muted">{L.pick}</p>
+  if (!c) return <p className="text-sm text-muted">{viewing ? L.pickPart : L.pick}</p>
   const rows = [[L.function, c.fn], [L.spec, c.spec], [L.engineering, c.note]]
   return (
     <div key={c.id} aria-live="polite">

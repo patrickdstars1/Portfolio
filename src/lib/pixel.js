@@ -50,39 +50,43 @@ export function drawText(ctx, str, x, y, { scale = 1, color = '#fff', align = 'l
   pass(0, 0, color)
 }
 
-// 16x16 hero. Letters map to the palette below; '.' is transparent.
-export const HERO_SPRITE = {
-  palette: { h: '#75CFFF', H: '#3B8FC4', f: '#F2C9A0', k: '#10131A', b: '#2F5FA8', B: '#1D3C73', o: '#FFB47A', s: '#E6EDF5', p: '#5A3B2A', r: '#C8452C' },
-  rows: [
-    '.....rr.........',
-    '....hhhhhh......',
-    '...hhhhhhhH.....',
-    '...hHffffHH.....',
-    '...hfkffkfH...s.',
-    '....ffffff....s.',
-    '...bbbbbbbb...s.',
-    '..bbboobbbbb..s.',
-    '..bfbbbbbBfb.sss',
-    '..ffbbbbbBff..p.',
-    '...BbbbbbB......',
-    '...pppBppp......',
-  ],
-  legs: [
-    ['...pp...pp......', '...pp...pp......', '..kkk...kkk.....', '................'],
-    ['....pp.pp.......', '...pp...pp......', '..kk.....kkk....', '................'],
-  ],
-}
+// "Byte", the site mascot: a 16x16 round orange critter with big eyes.
+// '.' is transparent; the eyes and mouth are drawn separately so they can move.
+const MASCOT_PAL = { b: '#FFB47A', B: '#E08A4E', h: '#FFE0C2', e: '#FFE0C2', o: '#FF7A8A', k: '#5A2E14', w: '#FFFFFF', p: '#10131A' }
+const MASCOT_BODY = [
+  '................',
+  '..bb........bb..',
+  '.bebb......bbeb.',
+  '.bbbbbbbbbbbbbb.',
+  '.bhhbbbbbbbbbbb.',
+  'bbhbbbbbbbbbbbbb',
+  'bbbbbbbbbbbbbbbb',
+  'bbbbbbbbbbbbbbbb',
+  'bbbbbbbbbbbbbbbb',
+  'boobbbbbbbbbboob',
+  'boobbbbbbbbbboob',
+  'bbbbbbbbbbbbbbbb',
+  '.BbbbbbbbbbbbbB.',
+  '..BBBBBBBBBBBB..',
+]
+const MASCOT_FEET = ['..kkk......kkk..', '...kkk....kkk...']
 
-export function drawSprite(ctx, sprite, x, y, scale = 1, alt = false) {
-  const rows = [...sprite.rows, ...sprite.legs[alt ? 1 : 0]]
-  rows.forEach((row, ry) => {
-    for (let rx = 0; rx < row.length; rx++) {
-      const c = sprite.palette[row[rx]]
-      if (!c) continue
-      ctx.fillStyle = c
-      ctx.fillRect(x + rx * scale, y + ry * scale, scale, scale)
-    }
-  })
+/**
+ * @param o.frame 0 | 1   walk frame
+ * @param o.look  [x, y]  each 0 or 1: where the pupils sit inside the eyes
+ * @param o.mood  'idle' | 'blink' | 'happy'
+ */
+export function drawMascot(ctx, x, y, scale = 1, { frame = 0, look = [1, 1], mood = 'idle' } = {}) {
+  const px = (cx, cy, w, h, c) => { ctx.fillStyle = MASCOT_PAL[c]; ctx.fillRect(x + cx * scale, y + cy * scale, w * scale, h * scale) }
+  const rows = [...MASCOT_BODY, MASCOT_FEET[frame ? 1 : 0]]
+  rows.forEach((row, ry) => { for (let rx = 0; rx < row.length; rx++) if (row[rx] !== '.') px(rx, ry, 1, 1, row[rx]) })
+  for (const ex of [3, 10]) {
+    if (mood === 'happy') { px(ex, 8, 1, 1, 'p'); px(ex + 1, 7, 1, 1, 'p'); px(ex + 2, 8, 1, 1, 'p') } // ^ ^
+    else if (mood === 'blink') px(ex, 8, 3, 1, 'p')
+    else { px(ex, 6, 3, 3, 'w'); px(ex + (look[0] ? 1 : 0), 6 + (look[1] ? 1 : 0), 2, 2, 'p') }
+  }
+  if (mood === 'happy') { px(7, 10, 2, 1, 'p'); px(7, 11, 2, 1, 'o') } // open mouth
+  else px(7, 10, 2, 1, 'p')
 }
 
 // Small deterministic RNG so procedural art is identical on every load.

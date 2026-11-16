@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTheme } from '../hooks/useTheme.jsx'
 import { Parallax } from './Parallax.jsx'
-import { castleSprite, groundTile, heroSprite, orbSprite, ridgeTile, skyTile, slimeSprite, TILE, treeSprite } from '../lib/pixelScene.js'
+import { castleSprite, groundTile, orbSprite, ridgeTile, skyTile, slimeSprite, TILE, treeSprite } from '../lib/pixelScene.js'
+import Mascot from './Mascot.jsx'
 
-function usePixelScale() {
+export function usePixelScale() {
   const get = () => (window.innerWidth < 640 ? 3 : window.innerWidth < 1536 ? 4 : 5)
   const [s, setS] = useState(get)
   useEffect(() => {
@@ -35,13 +36,13 @@ export default function PixelScene({ variant = 'hero' }) {
     castle: castleSprite(theme),
     orb: orbSprite(theme),
     tree: treeSprite(theme),
-    hero: heroSprite(false),
     slime: slimeSprite(),
   }), [theme])
   const G = 40 * S // ground height
   const hero = variant === 'hero'
 
   return (
+    <>
     <div aria-hidden="true" className="pixelated pointer-events-none absolute inset-0 overflow-hidden">
       {hero && (
         <>
@@ -68,8 +69,10 @@ export default function PixelScene({ variant = 'hero' }) {
       </Parallax>
       {/* ground moves with the page */}
       <div className="absolute inset-x-0 bottom-0" style={{ height: G, backgroundImage: `url(${art.ground})`, backgroundSize: `${32 * S}px ${40 * S}px`, backgroundRepeat: 'repeat-x' }} />
-      <img src={art.hero} alt="" width={16 * S} height={16 * S} className="pixelated absolute left-[8%] block sm:left-[14%]" style={{ bottom: G - S, animation: 'bob 1.2s steps(2) infinite' }} />
-      <img src={art.slime} alt="" width={10 * S} height={8 * S} className="pixelated absolute left-[46%] block" style={{ bottom: G - S, animation: 'bob 0.9s steps(2) infinite' }} />
+      <img src={art.slime} alt="" width={10 * S} height={8 * S} className="pixelated absolute left-[62%] block" style={{ bottom: G - S, animation: 'bob 0.9s steps(2) infinite' }} />
     </div>
+    {/* the mascot sits above the page content so it can be clicked */}
+    <Mascot scale={S} bottom={G - S} start={hero ? 0.12 : 0.3} />
+    </>
   )
 }

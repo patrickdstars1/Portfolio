@@ -115,7 +115,7 @@ export default function Experience() {
   }, [])
 
   return (
-    <Section id="experience" level="03" title={t.experience.title} subtitle={t.experience.subtitle} deco={<><Deco kind="heart" speed={0.3} bob className="right-[3.5%] top-40" /><Deco kind="cloud" scale={4} speed={-0.2} className="left-[1%] top-[45%]" /></>}>
+    <Section id="experience" level="03" title={t.experience.title} subtitle={t.experience.subtitle} deco={<><Deco kind="briefcase" speed={0.3} tilt={5} className="right-[2.5%] top-36" /><Deco kind="floppy" speed={-0.2} tilt={-7} delay={1.5} className="left-[1.5%] top-[42%]" /></>}>
       <div className="relative">
         <div aria-hidden="true" className="absolute bottom-0 left-[6px] top-0 w-1 bg-line">
           <div ref={fillRef} className="h-full w-full origin-top bg-sky" style={{ transform: 'scaleY(0)' }} />

@@ -20,7 +20,7 @@ export default function InteractiveLab() {
       level="05"
       title={L.title}
       subtitle={L.subtitle}
-      deco={<><Deco kind="star" speed={0.3} bob className="right-[3%] top-28" /><Deco kind="block" speed={-0.2} className="left-[2.5%] top-[40%]" /></>}
+      deco={<><Deco kind="gamepad" speed={0.3} tilt={6} className="right-[2.5%] top-28" /><Deco kind="chip" speed={-0.2} tilt={-5} delay={0.6} className="left-[2%] top-[36%]" /></>}
     >
       <div ref={nearRef}>
         <Reveal className="mb-8 max-w-3xl">

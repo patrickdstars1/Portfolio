@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import { sfx } from '../lib/sound.js'
-import { drawText, HERO_SPRITE, drawSprite } from '../lib/pixel.js'
+import { drawText, drawMascot } from '../lib/pixel.js'
 
 const SEQ = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
 
@@ -31,7 +31,7 @@ export default function KonamiEgg() {
     const onKey = (e) => e.key === 'Escape' && setOpen(false)
     window.addEventListener('keydown', onKey)
 
-    // Short pixel animation: the hero runs in while confetti blocks rain down.
+    // Short pixel animation: the mascot runs in while confetti blocks rain down.
     const ctx = canvasRef.current.getContext('2d')
     const W = 160, H = 72
     const bits = Array.from({ length: 46 }, (_, i) => ({ x: (i * 37) % W, y: -((i * 53) % 90), s: 0.6 + ((i * 7) % 5) / 5, c: ['#75CFFF', '#FFB47A', '#F4F7FC'][i % 3] }))
@@ -45,7 +45,7 @@ export default function KonamiEgg() {
       drawText(ctx, t.konami.title, W / 2, 10, { scale: 1, color: '#FFB47A', align: 'center' })
       const x = Math.min(W / 2 - 8, -16 + tt * 60)
       const hop = x >= W / 2 - 8 ? Math.abs(Math.sin(tt * 6)) * 6 : 0
-      drawSprite(ctx, HERO_SPRITE, Math.round(x), Math.round(38 - hop), 1, Math.floor(tt * 8) % 2 === 1 && hop === 0)
+      drawMascot(ctx, Math.round(x), Math.round(40 - hop), 1, { frame: hop === 0 ? Math.floor(tt * 8) % 2 : 0, mood: hop > 0 ? 'happy' : 'idle', look: [1, 1] })
       ctx.fillStyle = '#263447'; ctx.fillRect(0, 56, W, 2)
       if (!reduced) raf = requestAnimationFrame(frame)
     }

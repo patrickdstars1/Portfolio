@@ -12,6 +12,7 @@ import Footer from './components/Footer.jsx'
 import KonamiEgg from './components/KonamiEgg.jsx'
 import { useLanguage } from './hooks/useLanguage.jsx'
 import { prefersReducedMotion, setLenis } from './lib/scroll.js'
+import { initCardLight } from './lib/cardLight.js'
 
 function Portfolio() {
   const { t } = useLanguage()
@@ -27,6 +28,9 @@ function Portfolio() {
     })
     return () => { cancelAnimationFrame(raf); lenis.destroy(); setLenis(null) }
   }, [])
+
+  // Card shadows react to the pointer.
+  useEffect(() => initCardLight(), [])
 
   // Arriving with a section hash jumps to that section.
   useEffect(() => {

@@ -1,5 +1,5 @@
 // PIXEL QUEST — an original 8-bit title screen, drawn procedurally at 256x224.
-import { drawSprite, drawText, HERO_SPRITE, rng } from '../lib/pixel.js'
+import { drawMascot, drawText, rng } from '../lib/pixel.js'
 
 export const GAME_W = 256
 export const GAME_H = 224
@@ -78,11 +78,11 @@ function title(ctx, t) {
   if (Math.floor(t * 2) % 2 === 0) drawText(ctx, 'PRESS START', GAME_W / 2, 126, { color: '#FCE9C8', align: 'center', shadow: '#0B1030' })
   drawText(ctx, '> 1 PLAYER', 98, 142, { color: '#F4F7FC', shadow: '#0B1030' })
   drawText(ctx, '  2 PLAYERS', 98, 153, { color: '#A9A6D6', shadow: '#0B1030' })
-  drawSprite(ctx, HERO_SPRITE, 36, 164 + bob, 1, false)
+  drawMascot(ctx, 36, 165 + bob, 1, { mood: Math.floor(t * 0.7) % 4 === 3 ? 'blink' : 'idle', look: [1, 0] })
   // a slime that paces back and forth
   const px = 120 + Math.round(Math.sin(t * 0.8) * 26)
   const squish = Math.floor(t * 4) % 2
-  ctx.fillStyle = '#FFB47A'; ctx.fillRect(px + 1, 174 + squish, 8, 6 - squish); ctx.fillRect(px, 176 + squish, 10, 4 - squish)
+  ctx.fillStyle = '#B98CFF'; ctx.fillRect(px + 1, 174 + squish, 8, 6 - squish); ctx.fillRect(px, 176 + squish, 10, 4 - squish)
   ctx.fillStyle = '#10131A'; ctx.fillRect(px + 2, 176 + squish, 2, 2); ctx.fillRect(px + 6, 176 + squish, 2, 2)
   drawText(ctx, '(C) 198X BANK.DEV', GAME_W / 2, 208, { color: '#F4F7FC', align: 'center', shadow: '#2A1608' })
 }
@@ -156,7 +156,7 @@ export function drawCoverArt(ctx, w, h, { compact = false } = {}) {
   const s = Math.floor(w / 128)
   const artH = Math.round(h * 0.62)
   ctx.drawImage(tmp, 28, 40, 200, 184, 0, h - artH, w, artH)
-  drawSprite(ctx, HERO_SPRITE, Math.round(w * 0.14), h - artH + Math.round(artH * 0.41), s * 3, false)
+  drawMascot(ctx, Math.round(w * 0.14), h - artH + Math.round(artH * 0.41), s * 3, { mood: 'happy' })
   // title block
   ctx.fillStyle = '#0B1030'; ctx.fillRect(0, 0, w, h - artH)
   ctx.fillStyle = '#FFB47A'; ctx.fillRect(0, h - artH, w, s * 2)

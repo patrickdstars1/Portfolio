@@ -13,10 +13,8 @@ export default function Hero() {
   const { theme } = useTheme()
   return (
     <section id="home" className="relative overflow-hidden pt-16" style={{ background: skyGradient(theme) }}>
-      <PixelScene />
-
-      <div className="relative mx-auto grid max-w-6xl items-start gap-10 px-5 pb-[78vw] pt-12 sm:pb-[340px] md:px-8 md:pt-16 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:pb-[400px] 2xl:pb-[480px]">
-        <div className="hero-copy">
+      <div className="pointer-events-none relative z-10 mx-auto grid max-w-6xl items-start gap-10 px-5 pb-[78vw] pt-10 sm:pb-[300px] md:px-8 md:pt-12 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:pb-[210px] 2xl:pb-[260px]">
+        <div className="pointer-events-auto">
           <p className="font-pixel text-[10px] leading-relaxed text-sky" lang="en">{t.hero.label}</p>
           <h1 className="mt-5 text-balance font-display text-[2.6rem] font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-[4.25rem]">
             {t.hero.heading}
@@ -65,16 +63,18 @@ export default function Hero() {
           )}
         </div>
 
-        <div className="lg:pl-2">
+        <div className="pointer-events-auto lg:pl-2">
           <Terminal />
         </div>
       </div>
+
+      <PixelScene />
 
       <button
         type="button"
         onClick={() => scrollToId('about')}
         lang="en"
-        className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 bg-black/70 px-3 py-2 text-[9px] uppercase leading-none text-white transition-colors hover:text-[#FFB47A]"
+        className="absolute bottom-3 left-1/2 z-30 inline-flex -translate-x-1/2 items-center gap-2 bg-black/70 px-3 py-2 text-[9px] uppercase leading-none text-white transition-colors hover:text-[#FFB47A]"
         style={{ fontFamily: "'Press Start 2P', monospace" }}
       >
         {t.hero.scroll}

@@ -1,46 +1,14 @@
-// Timeline for the lab. Everything in the 3D scene is a pure function of
-// progress p (0..1), so reassembly is exactly disassembly played backwards.
-import { Vector3 } from 'three'
+// Layouts for the BK-8's 11 parts. Each part has three poses:
+//   assembled - seated in the console
+//   exploded  - the layered "burger" view, top to bottom
+//   pile      - scattered on the desk after the console bursts apart
+import { Euler, Quaternion, Vector3 } from 'three'
 
 export const PART_IDS = ['topCase', 'buttons', 'cartSlot', 'heatShield', 'motherboard', 'cpu', 'gpu', 'ram', 'components', 'ports', 'bottomCase']
 const N = PART_IDS.length
 const MB = 4 // parts mounted on the motherboard travel with it
 const CHILD_OF_MB = new Set([5, 6, 7, 8, 9])
-
-export const TL = {
-  freeze: 0.05,
-  flicker: 0.07,
-  dim: 0.09,
-  collapse: 0.1,
-  off: 0.108,
-  disStart: 0.12,
-  disEnd: 0.582,
-  reStart: 0.63,
-  reEnd: 0.87,
-  on: 0.885,
-  bootStart: 0.895,
-  bootEnd: 0.932,
-  final: 0.95,
-}
-const DW = (TL.disEnd - TL.disStart) / N
-const RW = (TL.reEnd - TL.reStart) / N
-
-export const clamp01 = (x) => Math.min(1, Math.max(0, x))
-export const smooth = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t) }
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
-
-export const disWindow = (i) => [TL.disStart + i * DW, TL.disStart + (i + 1) * DW]
-// part i goes back in slot (N-1-i): last out, first in
-export const reWindow = (i) => { const k = N - 1 - i; return [TL.reStart + k * RW, TL.reStart + (k + 1) * RW] }
-
-// 0 = seated in its original position, 1 = fully exploded
-export function partAmount(i, p) {
-  const [a, b] = disWindow(i)
-  const [c, d] = reWindow(i)
-  const out = ease(clamp01((p - a) / ((b - a) * 0.55)))
-  const back = ease(clamp01((p - c) / ((d - c) * 0.85)))
-  return out * (1 - back)
-}
+const LIFT = 0.8 // the whole stack floats this far above the bottom casing
 
 // Exploded offsets (world units), relative to the seated position.
 const OFFSET = [
@@ -54,23 +22,17 @@ const OFFSET = [
   [0, 0.45, 0], // ram
   [0, 0.3, 0], // components
   [0, 0, 1.15], // ports slide forward out of the board edge
-  [0, 0, 0], // bottom casing stays on the desk; everything above lifts off it
+  [0, 0, 0], // bottom casing stays on the desk
 ].map((v) => new Vector3(...v))
 
-export function partOffset(i, p, out) {
-  out.copy(OFFSET[i]).multiplyScalar(partAmount(i, p))
-  if (CHILD_OF_MB.has(i)) out.addScaledVector(OFFSET[MB], partAmount(MB, p))
-  if (i !== N - 1) out.y += LIFT * partAmount(N - 1, p)
-  // casing lock: the top case presses slightly past flush, then springs back
-  if (i === 0) {
-    const [c, d] = reWindow(0)
-    const k = clamp01((p - (c + (d - c) * 0.85)) / ((d - c) * 0.15))
-    if (k > 0 && k < 1) out.y -= Math.sin(k * Math.PI) * 0.035
-  }
+export function explodedOffset(i, out) {
+  out.copy(OFFSET[i])
+  if (CHILD_OF_MB.has(i)) out.add(OFFSET[MB])
+  if (i !== N - 1) out.y += LIFT
   return out
 }
 
-// Close-up framing for each part: seated centre, camera direction, distance.
+// Seated centre of each part + close-up framing (camera direction, distance).
 const FOCUS = [
   { c: [0, 0.75, 0], dir: [0.5, 0.5, 1], dist: 7.4 },
   { c: [-0.95, 0.75, 0.95], dir: [-0.35, 0.55, 1], dist: 3.3 },
@@ -85,80 +47,59 @@ const FOCUS = [
   { c: [0, 0.45, 0], dir: [-0.45, 0.34, 1], dist: 7.6 },
 ]
 
-const LIFT = 0.8 // how far the stack rises off the bottom casing in the last step
-const PLAY = { pos: [1.0, 3.7, 11.4], tgt: [0.1, 1.0, -0.7] }
+// Where each part's centre comes to rest in the pile, and how it lies there.
+const PILE = [
+  { p: [-3.2, 0.36, 1.5], r: [Math.PI - 0.1, -0.45, 0.05] }, // top casing, upside down
+  { p: [2.4, 0.42, 2.1], r: [0.1, 0.9, 0.25] }, // buttons, landed in the tray
+  { p: [1.5, 0.22, -0.4], r: [0.0, 0.5, 0.0] }, // cartridge slot
+  { p: [0.2, 0.2, 0.6], r: [0.07, -0.5, 0.04] }, // heat shield
+  { p: [-0.6, 0.08, 2.7], r: [0.02, 0.3, 0.0] }, // motherboard
+  { p: [1.0, 0.1, 4.1], r: [0, 0.7, 0] }, // cpu
+  { p: [-1.8, 0.26, 3.6], r: [0.5, -0.4, 0.2] }, // gpu, propped on the board
+  { p: [2.9, 0.1, 4.2], r: [0, 1.25, 0] }, // ram
+  { p: [0.3, 0.2, -1.0], r: [0.0, -0.3, 0.0] }, // components
+  { p: [-1.6, 0.2, -0.5], r: [0, 0.8, 0] }, // ports
+  { p: [2.5, 0.25, 2.1], r: [0, 0.4, 0.03] }, // bottom casing
+].map(({ p, r }) => ({ p: new Vector3(...p), q: new Quaternion().setFromEuler(new Euler(...r)) }))
 
-export function sampleCamera(keys, p, pos, tgt) {
-  let i = 0
-  while (i < keys.length - 2 && p > keys[i + 1].p) i++
-  const a = keys[i], b = keys[i + 1]
-  const k = smooth(a.p, b.p, p)
-  pos.lerpVectors(a.pos, b.pos, k)
-  tgt.lerpVectors(a.tgt, b.tgt, k)
-  return a.shift + (b.shift - a.shift) * k
+const tmp = new Vector3()
+// Group position that puts part i's centre at its pile spot with its pile rotation.
+export function pilePose(i, seated, pos, quat) {
+  const pile = PILE[i]
+  quat.copy(pile.q)
+  tmp.set(...FOCUS[i].c).sub(seated).applyQuaternion(quat) // centre relative to the group origin
+  pos.copy(pile.p).sub(tmp)
 }
 
-// Console/CRT electrical state derived from p. `time` only drives flicker noise.
-export function powerAt(p, time) {
-  const on = p < TL.off || p >= TL.on
-  const noise = Math.sin(time * 47) * Math.sin(time * 31.7) > -0.15 ? 1 : 0.25
-  let led = on ? 1 : 0
-  if (p >= TL.flicker && p < TL.off) led = noise
-  let brightness = 1, collapse = 0, mode = 'title', bootT = 0
-  if (p >= TL.flicker && p < TL.dim) brightness = 0.55 + 0.45 * noise
-  else if (p >= TL.dim && p < TL.collapse) brightness = 1 - 0.6 * smooth(TL.dim, TL.collapse, p)
-  else if (p >= TL.collapse && p < TL.off) { brightness = 0.4 + 0.8 * smooth(TL.collapse, TL.off, p); collapse = smooth(TL.collapse, TL.off, p) }
-  else if (p >= TL.off && p < TL.on) { brightness = 0; collapse = 1; mode = 'off' }
-  else if (p >= TL.on && p < TL.bootEnd) {
-    mode = 'boot'
-    collapse = 1 - smooth(TL.on, TL.bootStart, p)
-    bootT = clamp01((p - TL.bootStart) / (TL.bootEnd - TL.bootStart))
-  }
-  return {
-    on,
-    led,
-    brightness,
-    collapse,
-    mode,
-    bootT,
-    frozen: p >= TL.freeze && p < TL.bootEnd,
-    glitch: p < TL.off ? smooth(TL.freeze, TL.flicker, p) : 0,
-    // cartridge seated (1) / ejected (0)
-    cart: 1 - smooth(TL.off, TL.disStart + 0.006, p) + smooth(TL.reEnd - 0.004, TL.on - 0.002, p),
-    // TV and game box slide out of the way while the console is in pieces
-    away: smooth(TL.off, TL.disStart + 0.012, p) * (1 - smooth(0.84, 0.878, p)),
-  }
+// Camera for each layout. Narrow canvases pull back.
+const VIEWS = {
+  assembled: { pos: [1.0, 3.7, 11.4], tgt: [0.1, 1.0, -0.7], wide: 0.74 },
+  pile: { pos: [0.6, 9.2, 14.2], tgt: [0, 0, 1.1], wide: 0.9 },
+  exploded: { pos: [7.2, 3.6, 13.2], tgt: [0, 2.9, 0], wide: 0.95 },
+}
+export function layoutCamera(layout, aspect, pos, tgt) {
+  const v = VIEWS[layout]
+  const f = aspect > 1.7 ? v.wide : aspect < 1.25 ? Math.min(1.7, 1.2 / aspect) : 1
+  tgt.set(...v.tgt)
+  pos.set(...v.pos).sub(tgt).multiplyScalar(f).add(tgt)
 }
 
-// ---- Inline (button-driven) mode -------------------------------------------
-// Simple camera path: play view -> wide exploded view -> play view.
-export function buildSimpleKeys(aspect) {
-  const fPlay = aspect < 1.25 ? Math.min(1.6, 1.15 / aspect) : aspect > 1.7 ? 0.74 : 1
-  const f = aspect < 1.2 ? Math.min(2.2, 1.25 / aspect) : 0.9
-  const play = (p) => ({
-    p,
-    tgt: new Vector3(...PLAY.tgt),
-    pos: new Vector3(...PLAY.pos).sub(new Vector3(...PLAY.tgt)).multiplyScalar(fPlay).add(new Vector3(...PLAY.tgt)),
-    shift: 0,
-  })
-  const c = new Vector3(0, 2.9, 0)
-  const over = (p, x, y, z) => ({ p, tgt: c.clone(), pos: new Vector3(x, y, z).multiplyScalar(f).add(c), shift: 0 })
-  return [
-    play(0), play(TL.dim),
-    over(0.2, 8.6, 0.8, 13.4), over(0.612, 6.4, 1.2, 14.4), over(TL.reStart, 6.4, 1.2, 14.4), over(0.84, 8.6, 0.8, 13.4),
-    play(TL.bootStart + 0.01), play(1),
-  ]
-}
-
-// Close-up of part i while the console is fully apart.
+// Close-up of part i in the exploded view.
 export function focusCamera(i, aspect, pos, tgt) {
   const f = FOCUS[i]
   const k = aspect < 1 ? Math.min(2.1, 0.95 / aspect) : 1
-  tgt.set(...f.c).add(OFFSET[i])
-  if (CHILD_OF_MB.has(i)) tgt.add(OFFSET[MB])
-  if (i !== N - 1) tgt.y += LIFT
+  explodedOffset(i, tgt).add(tmp.set(...f.c))
   pos.set(...f.dir).normalize().multiplyScalar(f.dist * k).add(tgt)
 }
 
-// Progress values the buttons animate between.
-export const P = { play: 0, shutdownEnd: TL.disStart, apart: 0.612, reStart: TL.reStart, reEnd: TL.reEnd, done: TL.final + 0.01 }
+// Easing used by the part animator.
+export const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3)
+export const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+export const easeOutBack = (t) => 1 + 2.4 * Math.pow(t - 1, 3) + 1.4 * Math.pow(t - 1, 2)
+export function bounceOut(t) {
+  const n = 7.5625, d = 2.75
+  if (t < 1 / d) return n * t * t
+  if (t < 2 / d) return n * (t -= 1.5 / d) * t + 0.75
+  if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + 0.9375
+  return n * (t -= 2.625 / d) * t + 0.984375
+}
