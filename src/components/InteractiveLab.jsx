@@ -26,7 +26,6 @@ export default function InteractiveLab() {
           <p className="font-pixel text-[10px] text-orange" lang="en">STAGE 05</p>
           <h2 id="lab-title" className="text-pop mt-4 font-display text-4xl font-semibold tracking-tight md:text-6xl md:leading-[1.05]">{L.title}</h2>
           <PixelRule className="mt-5" />
-          <p className="mt-5 text-lg text-muted">{L.subtitle}</p>
         </Reveal>
       </div>
 

@@ -91,7 +91,6 @@ export const translations = {
     lab: {
       eyebrow: 'BONUS STAGE',
       title: 'The Interactive Lab',
-      subtitle: 'Curiosity drives innovation. Let’s take things apart.',
       orbitHint: 'Drag to look around. Scroll to zoom.',
       tvOn: 'TV on',
       tvOff: 'TV off',
@@ -228,7 +227,6 @@ export const translations = {
     lab: {
       eyebrow: 'BONUS STAGE',
       title: 'The Interactive Lab',
-      subtitle: 'ความอยากรู้อยากเห็น คือจุดเริ่มต้นของนวัตกรรม',
       orbitHint: 'ลากเพื่อหมุนมุมมอง เลื่อนเมาส์เพื่อซูม',
       tvOn: 'เปิดทีวี',
       tvOff: 'ปิดทีวี',
