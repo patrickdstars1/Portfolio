@@ -32,7 +32,7 @@ export function explodedOffset(i, out) {
   return out
 }
 
-// Seated centre of each part + close-up framing (camera direction, distance).
+// Seated centre of each part (used to place parts in the pile).
 const FOCUS = [
   { c: [0, 0.75, 0], dir: [0.5, 0.5, 1], dist: 7.4 },
   { c: [-0.95, 0.75, 0.95], dir: [-0.35, 0.55, 1], dist: 3.3 },
@@ -79,17 +79,9 @@ const VIEWS = {
 }
 export function layoutCamera(layout, aspect, pos, tgt) {
   const v = VIEWS[layout]
-  const f = aspect > 1.7 ? v.wide : aspect < 1.25 ? Math.min(1.7, 1.2 / aspect) : 1
+  const f = aspect > 1.7 ? v.wide : aspect < 1.25 ? Math.min(2.5, 1.2 / aspect) : 1
   tgt.set(...v.tgt)
   pos.set(...v.pos).sub(tgt).multiplyScalar(f).add(tgt)
-}
-
-// Close-up of part i in the exploded view.
-export function focusCamera(i, aspect, pos, tgt) {
-  const f = FOCUS[i]
-  const k = aspect < 1 ? Math.min(2.1, 0.95 / aspect) : 1
-  explodedOffset(i, tgt).add(tmp.set(...f.c))
-  pos.set(...f.dir).normalize().multiplyScalar(f.dist * k).add(tgt)
 }
 
 // Easing used by the part animator.

@@ -7,11 +7,10 @@ import * as THREE from 'three'
 import RetroConsole from './RetroConsole.jsx'
 import GameCartridge, { poseCartridge } from './GameCartridge.jsx'
 import CRTScreen from './CRTScreen.jsx'
-import { bounceOut, easeInOutCubic, easeOutBack, easeOutCubic, explodedOffset, focusCamera, layoutCamera, PART_IDS, pilePose } from './ExplodedView.js'
+import { bounceOut, easeInOutCubic, easeOutBack, easeOutCubic, explodedOffset, layoutCamera, PART_IDS, pilePose } from './ExplodedView.js'
 import { sfx } from '../lib/sound.js'
 import { shadowTexture } from './textures.js'
 
-const BG = '#05070c'
 
 export function StudioLights() {
   return (
@@ -32,7 +31,7 @@ export function StudioLights() {
   )
 }
 
-function Rig({ sim, onPower }) {
+function Rig({ sim }) {
   const { camera, size } = useThree()
   const parts = useRef({})
   const cart = useRef()
@@ -45,6 +44,13 @@ function Rig({ sim, onPower }) {
   const pointer = useRef({ x: 0, y: 0 })
   const shadowTex = useMemo(() => shadowTexture(), [])
   useEffect(() => () => shadowTex.dispose(), [shadowTex])
+
+  useEffect(() => {
+    // nudge the picture down (and right on wide screens) so it clears the heading
+    const wide = size.width >= 1024
+    camera.setViewOffset(size.width, size.height, wide ? -size.width * 0.09 : 0, -size.height * (wide ? 0.12 : 0.13), size.width, size.height)
+    return () => camera.clearViewOffset()
+  }, [camera, size.width, size.height])
 
   useEffect(() => {
     const on = (e) => { pointer.current.x = (e.clientX / window.innerWidth) * 2 - 1; pointer.current.y = (e.clientY / window.innerHeight) * 2 - 1 }
@@ -133,10 +139,9 @@ function Rig({ sim, onPower }) {
     if (tv.current) { tv.current.position.x = -e.away * 9; tv.current.position.z = -e.away * 3; tv.current.visible = e.away < 0.995 }
     if (shadow.current) shadow.current.material.opacity = sim.layout === 'assembled' ? 0.9 : 0.35
 
-    // --- camera: close-up of the selected part, otherwise the view for this layout
+    // --- camera: one view per layout
     const aspect = size.width / size.height
-    if (sim.focus >= 0 && sim.layout === 'exploded') focusCamera(sim.focus, aspect, v.pos, v.tgt)
-    else layoutCamera(sim.layout, aspect, v.pos, v.tgt)
+    layoutCamera(sim.layout, aspect, v.pos, v.tgt)
     v.look.subVectors(v.tgt, v.pos)
     const dist = v.look.length()
     v.right.crossVectors(v.look, camera.up).normalize()
@@ -152,13 +157,9 @@ function Rig({ sim, onPower }) {
 
   return (
     <>
-      <RetroConsole partsRef={parts} stateRef={consoleState} onPower={onPower} interactive />
+      <RetroConsole partsRef={parts} stateRef={consoleState} />
       <GameCartridge innerRef={cart} />
       <CRTScreen screenRef={screen} groupRef={tv} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.06, 0]}>
-        <circleGeometry args={[40, 48]} />
-        <meshStandardMaterial color="#0c1018" roughness={0.92} />
-      </mesh>
       <mesh ref={shadow} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0.1]}>
         <planeGeometry args={[6.6, 5.2]} />
         <meshBasicMaterial map={shadowTex} transparent depthWrite={false} />
@@ -167,20 +168,18 @@ function Rig({ sim, onPower }) {
   )
 }
 
-export default function LabScene({ sim, onPower, active = true }) {
+export default function LabScene({ sim, active = true }) {
   const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches
   return (
     <Canvas
       frameloop={active ? 'always' : 'never'}
       dpr={[1, mobile ? 1.5 : 1.75]}
       camera={{ fov: 34, near: 0.1, far: 120, position: [1.0, 3.7, 11.4] }}
-      gl={{ antialias: !mobile, powerPreference: 'high-performance' }}
+      gl={{ antialias: !mobile, alpha: true, powerPreference: 'high-performance' }}
       onCreated={({ gl }) => { gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1.05 }}
     >
-      <color attach="background" args={[BG]} />
-      <fog attach="fog" args={[BG, 16, 42]} />
       <StudioLights />
-      <Rig sim={sim} onPower={onPower} />
+      <Rig sim={sim} />
     </Canvas>
   )
 }

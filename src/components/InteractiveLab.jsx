@@ -1,13 +1,14 @@
 import { lazy, Suspense } from 'react'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import { useInView } from '../hooks/useInView.js'
-import Section, { Reveal } from './Section.jsx'
+import { PixelRule, Reveal } from './Section.jsx'
 import { Deco } from './Parallax.jsx'
 
 // three.js and GSAP are only fetched once this section gets close to the viewport.
 const LabStage = lazy(() => import('../lab/LabStage.jsx'))
-const TAGS = ['Three.js', 'React Three Fiber', 'GSAP', 'WebAudio', 'Canvas 2D']
 
+// No card and no frame: the 3D console is the section's background,
+// with the heading on top and the three buttons at the bottom.
 export default function InteractiveLab() {
   const { t } = useLanguage()
   const L = t.lab
@@ -15,30 +16,24 @@ export default function InteractiveLab() {
   const [viewRef, visible] = useInView({ rootMargin: '100px 0px' })
 
   return (
-    <Section
-      id="lab"
-      level="05"
-      title={L.title}
-      subtitle={L.subtitle}
-      deco={<><Deco kind="gamepad" speed={0.3} tilt={6} className="right-[2.5%] top-28" /><Deco kind="chip" speed={-0.2} tilt={-5} delay={0.6} className="left-[2%] top-[36%]" /></>}
-    >
-      <div ref={nearRef}>
-        <Reveal className="mb-8 max-w-3xl">
-          <p className="text-pretty text-muted">{L.body}</p>
-          <ul className="mt-5 flex flex-wrap gap-2">
-            {TAGS.map((x) => <li key={x} className="border-2 border-line px-2.5 py-1 font-mono text-xs">{x}</li>)}
-          </ul>
+    <section id="lab" ref={nearRef} aria-labelledby="lab-title" className="relative flex min-h-[820px] flex-col overflow-clip border-t-4 border-line pb-10 pt-20 md:min-h-[100svh] md:pb-14 md:pt-28">
+      <div ref={viewRef} className="pointer-events-none absolute inset-0" />
+      <Deco kind="gamepad" speed={0.3} tilt={6} className="right-[2.5%] top-28" />
+
+      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-6xl px-5 md:px-8">
+        <Reveal className="max-w-2xl">
+          <p className="font-pixel text-[10px] text-orange" lang="en">STAGE 05</p>
+          <h2 id="lab-title" className="text-pop mt-4 font-display text-4xl font-semibold tracking-tight md:text-6xl md:leading-[1.05]">{L.title}</h2>
+          <PixelRule className="mt-5" />
+          <p className="mt-5 text-lg text-muted">{L.subtitle}</p>
         </Reveal>
-        <div ref={viewRef} className="px-card overflow-hidden">
-          {near ? (
-            <Suspense fallback={<p className="grid h-[380px] place-items-center bg-[#05070c] font-mono text-xs text-[#7F8EA3] sm:h-[480px] lg:h-[560px]">{L.loading}</p>}>
-              <LabStage active={visible} />
-            </Suspense>
-          ) : (
-            <div className="h-[380px] bg-[#05070c] sm:h-[480px] lg:h-[560px]" />
-          )}
-        </div>
       </div>
-    </Section>
+
+      {near && (
+        <Suspense fallback={<p className="relative m-auto font-mono text-xs text-muted">{L.loading}</p>}>
+          <LabStage active={visible} />
+        </Suspense>
+      )}
+    </section>
   )
 }
