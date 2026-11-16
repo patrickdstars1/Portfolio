@@ -90,7 +90,7 @@ export default function LabStage({ active }) {
   return (
     <>
       {/* the scene fills the whole section, behind the heading and buttons */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div className="lab-canvas pointer-events-none absolute inset-0 isolate z-0">
         <Boundary fallback={<p className="grid h-full place-items-center px-6 text-center font-mono text-sm text-muted">{L.error}</p>}>
           <LabScene sim={sim} active={active} />
         </Boundary>

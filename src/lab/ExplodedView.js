@@ -1,8 +1,8 @@
 // Layouts for the BK-8's 11 parts. Each part has three poses:
 //   assembled - seated in the console
 //   exploded  - the layered "burger" view, top to bottom
-//   pile      - scattered on the desk after the console bursts apart
-import { Euler, Quaternion, Vector3 } from 'three'
+//   pile      - wherever the physics simulation drops them (see physics.js)
+import { Vector3 } from 'three'
 
 export const PART_IDS = ['topCase', 'buttons', 'cartSlot', 'heatShield', 'motherboard', 'cpu', 'gpu', 'ram', 'components', 'ports', 'bottomCase']
 const N = PART_IDS.length
@@ -32,50 +32,14 @@ export function explodedOffset(i, out) {
   return out
 }
 
-// Seated centre of each part (used to place parts in the pile).
-const FOCUS = [
-  { c: [0, 0.75, 0], dir: [0.5, 0.5, 1], dist: 7.4 },
-  { c: [-0.95, 0.75, 0.95], dir: [-0.35, 0.55, 1], dist: 3.3 },
-  { c: [0, 0.45, -0.35], dir: [0.45, 0.5, 1], dist: 4.6 },
-  { c: [0, 0.48, 0], dir: [-0.4, 0.55, 1], dist: 6.4 },
-  { c: [0, 0.18, 0], dir: [0.3, 0.5, 1], dist: 6.4 },
-  { c: [-0.8, 0.26, 0.35], dir: [-0.3, 0.4, 1], dist: 3.0 },
-  { c: [0.75, 0.26, 0.35], dir: [0.35, 0.4, 1], dist: 3.0 },
-  { c: [-0.4, 0.24, 0.9], dir: [-0.2, 0.42, 1], dist: 3.0 },
-  { c: [0.1, 0.3, -0.9], dir: [0.3, 0.42, 1], dist: 5.0 },
-  { c: [0.9, 0.33, 1.3], dir: [0.5, 0.4, 1], dist: 3.3 },
-  { c: [0, 0.45, 0], dir: [-0.45, 0.34, 1], dist: 7.6 },
-]
-
-// Where each part's centre comes to rest in the pile, and how it lies there.
-const PILE = [
-  { p: [-3.2, 0.36, 1.5], r: [Math.PI - 0.1, -0.45, 0.05] }, // top casing, upside down
-  { p: [2.4, 0.42, 2.1], r: [0.1, 0.9, 0.25] }, // buttons, landed in the tray
-  { p: [1.5, 0.22, -0.4], r: [0.0, 0.5, 0.0] }, // cartridge slot
-  { p: [0.2, 0.2, 0.6], r: [0.07, -0.5, 0.04] }, // heat shield
-  { p: [-0.6, 0.08, 2.7], r: [0.02, 0.3, 0.0] }, // motherboard
-  { p: [1.0, 0.1, 4.1], r: [0, 0.7, 0] }, // cpu
-  { p: [-1.8, 0.26, 3.6], r: [0.5, -0.4, 0.2] }, // gpu, propped on the board
-  { p: [2.9, 0.1, 4.2], r: [0, 1.25, 0] }, // ram
-  { p: [0.3, 0.2, -1.0], r: [0.0, -0.3, 0.0] }, // components
-  { p: [-1.6, 0.2, -0.5], r: [0, 0.8, 0] }, // ports
-  { p: [2.5, 0.25, 2.1], r: [0, 0.4, 0.03] }, // bottom casing
-].map(({ p, r }) => ({ p: new Vector3(...p), q: new Quaternion().setFromEuler(new Euler(...r)) }))
-
-const tmp = new Vector3()
-// Group position that puts part i's centre at its pile spot with its pile rotation.
-export function pilePose(i, seated, pos, quat) {
-  const pile = PILE[i]
-  quat.copy(pile.q)
-  tmp.set(...FOCUS[i].c).sub(seated).applyQuaternion(quat) // centre relative to the group origin
-  pos.copy(pile.p).sub(tmp)
-}
-
-// Camera for each layout. Narrow canvases pull back.
+// Camera for each layout. Narrow canvases pull back. Each view aims a little
+// above the scene so the picture sits in the lower part of the section,
+// clear of the heading. (The canvas itself must not be offset: that breaks
+// pointer hit-testing for the site shown on the TV.)
 const VIEWS = {
-  assembled: { pos: [1.0, 3.7, 11.4], tgt: [0.1, 1.0, -0.7], wide: 0.74 },
-  pile: { pos: [0.6, 9.2, 14.2], tgt: [0, 0, 1.1], wide: 0.9 },
-  exploded: { pos: [7.2, 3.6, 13.2], tgt: [0, 2.9, 0], wide: 0.95 },
+  assembled: { pos: [-0.9, 4.2, 10.6], tgt: [-1.5, 2.2, -0.9], wide: 0.6 },
+  pile: { pos: [0.4, 10.4, 14.9], tgt: [0, 0, 1.6], wide: 0.92 },
+  exploded: { pos: [7.2, 4.5, 13.2], tgt: [0, 3.8, 0], wide: 0.95 },
 }
 export function layoutCamera(layout, aspect, pos, tgt) {
   const v = VIEWS[layout]

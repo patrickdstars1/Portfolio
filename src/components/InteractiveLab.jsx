@@ -3,6 +3,7 @@ import { useLanguage } from '../hooks/useLanguage.jsx'
 import { useInView } from '../hooks/useInView.js'
 import { PixelRule, Reveal } from './Section.jsx'
 import { Deco } from './Parallax.jsx'
+import { isEmbed } from '../lib/scroll.js'
 
 // three.js and GSAP are only fetched once this section gets close to the viewport.
 const LabStage = lazy(() => import('../lab/LabStage.jsx'))
@@ -16,7 +17,7 @@ export default function InteractiveLab() {
   const [viewRef, visible] = useInView({ rootMargin: '100px 0px' })
 
   return (
-    <section id="lab" ref={nearRef} aria-labelledby="lab-title" className="relative flex min-h-[820px] flex-col overflow-clip border-t-4 border-line pb-10 pt-20 md:min-h-[100svh] md:pb-14 md:pt-28">
+    <section id="lab" ref={nearRef} aria-labelledby="lab-title" className="relative flex min-h-[820px] flex-col [.embed_&]:min-h-[420px] overflow-clip border-t-4 border-line pb-10 pt-20 md:min-h-[100svh] [.embed_&]:md:min-h-[420px] md:pb-14 md:pt-28">
       <div ref={viewRef} className="pointer-events-none absolute inset-0" />
       <Deco kind="gamepad" speed={0.3} tilt={6} className="right-[2.5%] top-28" />
 
@@ -29,7 +30,12 @@ export default function InteractiveLab() {
         </Reveal>
       </div>
 
-      {near && (
+      {isEmbed() ? (
+        // Inside the TV there is no second console: that would be a console inside a console.
+        <p lang="en" className="relative m-auto max-w-xs px-5 text-center font-pixel text-[10px] leading-loose text-sky">
+          YOU ARE ALREADY INSIDE THE BK-8.<br /><span className="text-orange">LOOK UP FROM THE SCREEN.</span>
+        </p>
+      ) : near && (
         <Suspense fallback={<p className="relative m-auto font-mono text-xs text-muted">{L.loading}</p>}>
           <LabStage active={visible} />
         </Suspense>

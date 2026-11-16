@@ -11,7 +11,7 @@ import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import KonamiEgg from './components/KonamiEgg.jsx'
 import { useLanguage } from './hooks/useLanguage.jsx'
-import { prefersReducedMotion, setLenis } from './lib/scroll.js'
+import { isEmbed, prefersReducedMotion, setLenis } from './lib/scroll.js'
 import { initCardLight } from './lib/cardLight.js'
 
 function Portfolio() {
@@ -19,7 +19,7 @@ function Portfolio() {
 
   // Smooth scrolling for the main page only; skipped for reduced-motion users.
   useEffect(() => {
-    if (prefersReducedMotion()) return
+    if (prefersReducedMotion() || isEmbed()) return
     const lenis = new Lenis({ duration: 1.0, anchors: false })
     setLenis(lenis)
     let raf = requestAnimationFrame(function loop(time) {
@@ -62,7 +62,7 @@ export default function App() {
   return (
     <>
       <Portfolio />
-      <KonamiEgg />
+      {!isEmbed() && <KonamiEgg />}
     </>
   )
 }

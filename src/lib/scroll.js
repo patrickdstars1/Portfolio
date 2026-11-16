@@ -1,4 +1,7 @@
 // Holds the active Lenis instance (if any) so any component can request a smooth scroll.
+// True inside the TV in the lab, where the site runs in an iframe.
+export const isEmbed = () => typeof document !== 'undefined' && document.documentElement.classList.contains('embed')
+
 let lenis = null
 export const setLenis = (l) => { lenis = l }
 

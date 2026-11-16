@@ -24,6 +24,32 @@ const tile = (url, S, h) => ({
   backgroundSize: `${TILE * S}px ${h * S}px`,
 })
 
+// Every few seconds a pixel meteor crosses the night sky.
+function ShootingStars({ px }) {
+  const [stars, setStars] = useState([])
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let id = 0, timer
+    const spawn = () => {
+      if (!document.hidden) {
+        const star = { id: ++id, left: 30 + Math.random() * 65, top: Math.random() * 28, travel: 160 + Math.random() * 200, dur: 0.9 + Math.random() * 0.6 }
+        setStars((s) => [...s.slice(-3), star])
+      }
+      timer = setTimeout(spawn, 2600 + Math.random() * 4200)
+    }
+    timer = setTimeout(spawn, 1200)
+    return () => clearTimeout(timer)
+  }, [])
+  return stars.map((s) => (
+    <span
+      key={s.id}
+      className="shooting-star"
+      style={{ left: `${s.left}%`, top: `${s.top}%`, '--px': `${px}px`, '--travel': `${s.travel}px`, '--dur': `${s.dur}s` }}
+      onAnimationEnd={() => setStars((list) => list.filter((x) => x.id !== s.id))}
+    />
+  ))
+}
+
 /** variant "hero": full scene with sky objects. variant "footer": ground, hills and characters only. */
 export default function PixelScene({ variant = 'hero' }) {
   const { theme } = useTheme()
@@ -50,6 +76,7 @@ export default function PixelScene({ variant = 'hero' }) {
           <Parallax speed={0.55} className="absolute inset-x-0 top-0 h-[70%]">
             <div className="h-full w-full" style={{ ...tile(art.sky, S, 160), backgroundPosition: 'left top', '--tile': `${TILE * S}px`, animation: theme === 'light' ? 'drift 90s linear infinite' : undefined }} />
           </Parallax>
+          {theme === 'dark' && <ShootingStars px={S} />}
           <Parallax speed={0.45} className="absolute right-[16%] top-[14%] hidden sm:block">
             <img src={art.orb} alt="" width={28 * S} height={28 * S} className="pixelated block" />
           </Parallax>

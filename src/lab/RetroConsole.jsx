@@ -62,6 +62,7 @@ function useResources() {
     const M = (o) => new THREE.MeshStandardMaterial(o)
     const mat = {
       caseTop: M({ color: '#8f9299', roughness: 0.78, bumpMap: grain, bumpScale: 0.6 }),
+      caseTopLight: M({ color: '#e6e2d6', roughness: 0.6 }),
       caseBottom: M({ color: '#34373e', roughness: 0.82, bumpMap: grain, bumpScale: 0.6 }),
       dark: M({ color: '#16181c', roughness: 0.7 }),
       black: M({ color: '#0b0c0e', roughness: 0.55 }),
@@ -76,6 +77,9 @@ function useResources() {
       chip: M({ color: '#1a1b1f', roughness: 0.45 }),
       pcb: M({ color: '#ffffff', roughness: 0.55, map: pcbTexture() }),
       pcbPlain: M({ color: '#1d5f3f', roughness: 0.6 }),
+      socket: M({ color: '#3a2a20', roughness: 0.7 }),
+      ribbon: M({ color: '#c9793a', roughness: 0.6 }),
+      solder: M({ color: '#d5d9de', metalness: 1, roughness: 0.25 }),
       capBlue: M({ color: '#27467e', roughness: 0.4 }),
       capOrange: M({ color: '#c8742f', roughness: 0.45 }),
       ceramic: M({ color: '#c9a36a', roughness: 0.6 }),
@@ -89,6 +93,7 @@ function useResources() {
       gpu: lbl(['BK-PPU', 'VIDEO  8922'], { w: 512, h: 150, notch: true }),
       ram1: lbl(['BK6116  2K', 'SRAM'], { w: 384, h: 140, size: 30, notch: true }),
       ram2: lbl(['BK6116  2K', 'VRAM'], { w: 384, h: 140, size: 30, notch: true }),
+      serial: lbl(['BK-8  MODEL 0001', 'DC 9V  850mA', 'MADE BY BANK.DEV'], { w: 512, h: 256, bg: '#d9d4c3', fg: '#22252a', size: 30 }),
       rf: lbl(['RF MODULATOR', 'CH3 / CH4'], { w: 512, h: 256, bg: '#aeb4bc', fg: '#22252a', size: 36 }),
       badge: lbl(['BK-8', 'ENTERTAINMENT COMPUTER'], { w: 640, h: 150, bg: '#16181c', fg: '#d5dae1', size: 40 }),
       power: lbl(['POWER'], { w: 256, h: 64, bg: '#8f9299', fg: '#1c1e22', size: 34, weight: 700 }),
@@ -125,6 +130,20 @@ function useResources() {
       posts: cylinders([[-1.6, 0.11, -1.1, 0.09, 0.1], [1.6, 0.11, -1.1, 0.09, 0.1], [-1.6, 0.11, 1.1, 0.09, 0.1], [1.6, 0.11, 1.1, 0.09, 0.1]]),
       feet: cylinders([[-1.55, -0.02, -1.05, 0.16, 0.05], [1.55, -0.02, -1.05, 0.16, 0.05], [-1.55, -0.02, 1.05, 0.16, 0.05], [1.55, -0.02, 1.05, 0.16, 0.05]], 20),
       portHoles: boxes([[0.5, 0.33, 1.502, 0.58, 0.3, 0.01], [1.3, 0.33, 1.502, 0.58, 0.3, 0.01]]),
+      // extra detail: structural ribs, bosses, vents, sockets
+      topScrews: cylinders([[-1.75, 0, -1.25, 0.07, 0.02], [1.75, 0, -1.25, 0.07, 0.02], [-1.75, 0, 1.25, 0.07, 0.02], [1.75, 0, 1.25, 0.07, 0.02]], 10),
+      topBosses: cylinders([[-1.6, 0.17, -1.1, 0.1, 0.34], [1.6, 0.17, -1.1, 0.1, 0.34], [-1.6, 0.17, 1.1, 0.1, 0.34], [1.6, 0.17, 1.1, 0.1, 0.34]], 12),
+      topRibs: boxes([[0, 0.28, 0.55, 3.8, 0.12, 0.04], [-0.6, 0.28, 0.85, 0.04, 0.12, 1.1], [0.9, 0.28, 0.85, 0.04, 0.12, 1.1], [0, 0.28, -1.0, 3.8, 0.12, 0.04]]),
+      seam: ring(4.02, 3.02, 0.21, 0.02, 0.03),
+      bottomRibs: boxes([[0, 0.1, 0, 3.8, 0.08, 0.04], [-0.95, 0.1, 0, 0.04, 0.08, 2.8], [0.95, 0.1, 0, 0.04, 0.08, 2.8]]),
+      bottomVents: boxes(range(7).map((i) => [-0.9 + i * 0.3, 0.062, -0.75, 0.16, 0.006, 0.7])),
+      underVents: boxes(range(7).map((i) => [-0.9 + i * 0.3, -0.014, -0.75, 0.16, 0.006, 0.7])),
+      sockets: boxes([[-0.8, 0.03, 0.35, 1.36, 0.03, 0.44], [0.75, 0.03, 0.35, 1.36, 0.03, 0.44], [-0.9, 0.03, 0.9, 0.86, 0.03, 0.44], [0.1, 0.03, 0.9, 0.86, 0.03, 0.44]]),
+      fingers: boxes(range(16).map((i) => [-1.55 + i * 0.075, 0.022, 1.2, 0.045, 0.004, 0.1])),
+      joints: cylinders(range(60).map((i) => [-1.6 + (i % 20) * 0.168, -0.024, -0.9 + Math.floor(i / 20) * 0.9 + (i % 3) * 0.05, 0.022, 0.012]), 6),
+      shieldRibs: boxes([[0, 0.028, 0.72, 3.0, 0.016, 0.06], [-1.5, 0.028, -0.1, 0.06, 0.016, 1.9], [1.5, 0.028, -0.1, 0.06, 0.016, 1.9]]),
+      shieldTabs: boxes([[-1.72, -0.12, -0.8, 0.02, 0.14, 0.3], [1.72, -0.12, -0.8, 0.02, 0.14, 0.3], [-1.72, -0.12, 0.8, 0.02, 0.14, 0.3], [1.72, -0.12, 0.8, 0.02, 0.14, 0.3]]),
+      portScrews: cylinders([[-0.2, 0.135, 0.1, 0.03, 0.012], [0.2, 0.135, 0.1, 0.03, 0.012]], 8),
       // heat shield: perforated plate with a cut-out for the cartridge connector
       shield: plate(3.4, 2.4, 0.06, 0.02, [
         { x: 0, z: -0.35, w: 2.5, d: 0.5, r: 0.03 },
@@ -164,8 +183,10 @@ function useResources() {
 function Chip({ res, len, geo, label, position }) {
   return (
     <group position={position}>
-      <mesh material={res.mat.chip} position={[0, 0.07, 0]}><boxGeometry args={[len, 0.1, 0.36]} /></mesh>
-      <mesh material={label} position={[0, 0.1205, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[len * 0.94, 0.3]} /></mesh>
+      <mesh material={res.mat.chip} position={[0, 0.065, 0]}><boxGeometry args={[len, 0.09, 0.36]} /></mesh>
+      <mesh material={res.mat.chip} position={[0, 0.113, 0]}><boxGeometry args={[len - 0.04, 0.012, 0.32]} /></mesh>
+      <mesh material={res.mat.void} position={[-len / 2 + 0.07, 0.121, 0.1]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[0.025, 10]} /></mesh>
+      <mesh material={label} position={[0.03, 0.1205, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[len * 0.84, 0.28]} /></mesh>
       <mesh geometry={geo} material={res.mat.metal} />
     </group>
   )
@@ -205,6 +226,10 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
         <mesh geometry={geo.posts} material={mat.caseBottom} />
         <mesh geometry={geo.feet} material={mat.rubber} />
         <mesh geometry={geo.portHoles} material={mat.void} />
+        <mesh geometry={geo.bottomRibs} material={mat.caseBottom} />
+        <mesh geometry={geo.bottomVents} material={mat.void} />
+        <mesh geometry={geo.underVents} material={mat.void} />
+        <mesh material={label.serial} position={[0.9, -0.0135, 0.6]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[1.3, 0.65]} /></mesh>
       </group>
 
       {/* 5 — motherboard */}
@@ -212,6 +237,10 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
         <mesh material={[mat.pcbPlain, mat.pcbPlain, mat.pcb, mat.pcbPlain, mat.pcbPlain, mat.pcbPlain]}>
           <boxGeometry args={[3.5, 0.04, 2.5]} />
         </mesh>
+        <mesh geometry={geo.sockets} material={mat.socket} />
+        <mesh geometry={geo.fingers} material={mat.gold} />
+        <mesh geometry={geo.joints} material={mat.solder} />
+        <mesh material={mat.caseTopLight} position={[-1.45, 0.05, 0.95]}><boxGeometry args={[0.16, 0.07, 0.42]} /></mesh>
       </group>
 
       {/* 6 — CPU */}
@@ -255,6 +284,8 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
             <mesh material={mat.void} position={[0, 0, 0.212]}><planeGeometry args={[0.42, 0.18]} /></mesh>
             <mesh geometry={geo.portPins} material={mat.gold} position={[0, 0, 0.2]} />
             <mesh material={mat.metalDull} position={[0, -0.12, -0.12]}><boxGeometry args={[0.44, 0.02, 0.2]} /></mesh>
+            <mesh material={mat.metalDull} position={[0, 0.005, -0.05]}><boxGeometry args={[0.56, 0.27, 0.3]} /></mesh>
+            <mesh geometry={geo.portScrews} material={mat.gold} />
           </group>
         ))}
       </group>
@@ -264,6 +295,8 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
         <mesh geometry={geo.shield} material={mat.tin} />
         <mesh geometry={geo.shieldRim} material={mat.tin} position={[0, -0.1, 0]} />
         <mesh geometry={geo.shieldScrews} material={mat.gold} />
+        <mesh geometry={geo.shieldRibs} material={mat.tin} />
+        <mesh geometry={geo.shieldTabs} material={mat.tin} />
       </group>
 
       {/* 3 — cartridge slot & connector */}
@@ -274,6 +307,9 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
         <mesh material={mat.black} position={[1.13, 0.2, 0]}><boxGeometry args={[0.08, 0.4, 0.27]} /></mesh>
         <mesh material={mat.black} position={[0, 0.02, 0]}><boxGeometry args={[2.3, 0.04, 0.27]} /></mesh>
         <mesh geometry={geo.connPins} material={mat.gold} />
+        <mesh material={mat.dark} position={[-1.13, 0.47, 0]}><boxGeometry args={[0.05, 0.16, 0.34]} /></mesh>
+        <mesh material={mat.dark} position={[1.13, 0.47, 0]}><boxGeometry args={[0.05, 0.16, 0.34]} /></mesh>
+        <mesh material={mat.metalDull} position={[0, 0.3, 0.15]}><boxGeometry args={[2.1, 0.02, 0.03]} /></mesh>
       </group>
 
       {/* 2 — power & reset button assembly */}
@@ -297,6 +333,10 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
         {/* LED + ribbon header */}
         <mesh material={mat.led} position={[-0.35, 0.12, 0]}><cylinderGeometry args={[0.035, 0.035, 0.2, 12]} /></mesh>
         <mesh material={mat.black} position={[-1.6, 0.04, 0]}><boxGeometry args={[0.1, 0.06, 0.3]} /></mesh>
+        <mesh material={mat.ribbon} position={[-1.6, 0.03, -0.42]}><boxGeometry args={[0.07, 0.012, 0.6]} /></mesh>
+        <mesh material={mat.solder} position={[-0.35, -0.03, 0]}><boxGeometry args={[0.05, 0.04, 0.012]} /></mesh>
+        <mesh material={mat.black} position={[-1.35, 0.12, 0]}><boxGeometry args={[0.14, 0.06, 0.1]} /></mesh>
+        <mesh material={mat.black} position={[-0.8, 0.12, 0]}><boxGeometry args={[0.14, 0.06, 0.1]} /></mesh>
       </group>
 
       {/* 1 — top casing */}
@@ -304,6 +344,10 @@ export default function RetroConsole({ partsRef, stateRef, onPower, interactive 
         <mesh geometry={geo.topSkirt} material={mat.caseTop} />
         <mesh geometry={geo.topPlate} material={mat.caseTop} position={[0, 0.35, 0]} />
         <mesh geometry={geo.slotLip} material={mat.dark} position={[0, 0.42, -0.35]} />
+        <mesh geometry={geo.topScrews} material={mat.black} position={[0, 0.432, 0]} />
+        <mesh geometry={geo.topBosses} material={mat.caseTop} />
+        <mesh geometry={geo.topRibs} material={mat.caseTop} />
+        <mesh geometry={geo.seam} material={mat.dark} position={[0, -0.015, 0]} />
         <mesh geometry={geo.vents} material={mat.black} position={[0, 0.438, 0]} />
         <mesh geometry={geo.ribs} material={mat.dark} position={[0, 0.438, 0]} />
         {/* front control band with colour stripes and badge */}

@@ -1,10 +1,14 @@
 // CRT television that plays PIXEL QUEST, plus the physical game box beside it.
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { RoundedBox } from '@react-three/drei'
+import { Html, RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { drawGame, GAME_H, GAME_W } from './pixelQuest.js'
 import { coverTexture } from './textures.js'
+
+// Where the television stands (also used by the physics colliders).
+export const TV_POS = [-3.7, 0, -2.0]
+export const TV_ROT = 0.3
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -58,7 +62,15 @@ const fragmentShader = /* glsl */ `
 /**
  * @param screenRef ref to { mode, bootT, time, glitch, brightness, collapse } updated by the parent each frame
  */
+// The portfolio itself, running inside the TV. It is the real site in an
+// iframe (embed mode: no nested 3D), so it scrolls and works like the page.
+const SITE_W = 640
+const SITE_H = 500
+const siteUrl = () => `${window.location.pathname}?embed=tv`
+
 export default function CRTScreen({ screenRef, groupRef }) {
+  const [showSite, setShowSite] = useState(false)
+  const siteOn = useRef(false)
   const glow = useRef()
   const tvLed = useRef()
   const frame = useRef(0)
@@ -114,17 +126,33 @@ export default function CRTScreen({ screenRef, groupRef }) {
     u.time.value = state.clock.elapsedTime
     if (glow.current) glow.current.intensity = s.brightness * (1 - s.collapse) * 5
     res.led.emissiveIntensity = s.brightness > 0.02 ? 2.5 : 0
+    // swap the boot animation for the live site once the "game" has started
+    const on = s.mode === 'title' && s.glitch === 0 && s.collapse < 0.02 && s.brightness > 0.5
+    if (on !== siteOn.current) { siteOn.current = on; setShowSite(on) }
   })
 
   return (
     <group ref={groupRef}>
       {/* television */}
-      <group position={[-2.35, 0, -2.6]} rotation={[0, 0.2, 0]}>
+      <group position={TV_POS} rotation={[0, TV_ROT, 0]}>
         <RoundedBox args={[4.0, 3.0, 2.7]} radius={0.16} smoothness={3} position={[0, 1.62, 0]} material={res.shell} />
         <mesh material={res.shell} position={[0, 0.07, 0]}><boxGeometry args={[3.4, 0.14, 2.2]} /></mesh>
         {/* dark front bezel with the tube recessed into it */}
         <mesh material={res.bezel} position={[-0.42, 1.66, 1.355]}><boxGeometry args={[2.9, 2.4, 0.03]} /></mesh>
         <mesh geometry={res.tube} material={res.screen} position={[-0.42, 1.66, 1.372]} />
+        {showSite && (
+          <Html
+            transform
+            occlude="blending"
+            position={[-0.42, 1.66, 1.48]}
+            distanceFactor={(2.5 / SITE_W) * 400}
+            style={{ width: SITE_W, height: SITE_H, pointerEvents: 'auto' }}
+          >
+            <div className="crt-site" style={{ width: SITE_W, height: SITE_H }}>
+              <iframe src={siteUrl()} title="BANK.DEV running on the BK-8" width={SITE_W} height={SITE_H} />
+            </div>
+          </Html>
+        )}
         {/* control panel */}
         <mesh material={res.bezel} position={[1.5, 1.66, 1.355]}><boxGeometry args={[0.72, 2.4, 0.03]} /></mesh>
         {[2.35, 1.85].map((y) => (
@@ -138,7 +166,7 @@ export default function CRTScreen({ screenRef, groupRef }) {
       </group>
 
       {/* game box, leaning beside the TV */}
-      <group position={[0.95, 1.06, -2.5]} rotation={[-0.09, -0.28, 0]}>
+      <group position={[1.9, 1.06, -2.6]} rotation={[-0.09, -0.3, 0]}>
         <mesh material={[res.boxSide, res.boxEdge, res.boxSide, res.boxSide, res.boxFront, res.boxSide]}>
           <boxGeometry args={[1.5, 2.1, 0.32]} />
         </mesh>
