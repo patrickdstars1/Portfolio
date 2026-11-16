@@ -1,6 +1,7 @@
 import { profile } from '../data/profile.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import Section, { Reveal } from './Section.jsx'
+import { Deco } from './Parallax.jsx'
 
 // Small line illustrations, one per card.
 const ART = [
@@ -34,7 +35,7 @@ export default function About() {
     [A.info.interests, pick(profile.interests).join(', ')],
   ]
   return (
-    <Section id="about" title={A.title}>
+    <Section id="about" level="01" title={A.title} deco={<><Deco kind="cloud" scale={5} speed={0.35} className="right-[3%] top-24" /><Deco kind="coin" speed={-0.25} bob className="left-[2.5%] top-[55%]" /></>}>
       <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-16">
         <Reveal className="space-y-5 text-lg text-pretty">
           {A.intro.map((p, i) => (
@@ -42,8 +43,8 @@ export default function About() {
           ))}
         </Reveal>
 
-        <Reveal as="aside" delay={80} aria-label={A.info.title} className="self-start rounded-xl border border-line bg-card p-6">
-          <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-sky">{A.info.title}</h3>
+        <Reveal as="aside" delay={80} aria-label={A.info.title} className="px-card self-start p-6">
+          <h3 className="font-pixel text-[10px] uppercase text-sky">{A.info.title}</h3>
           <dl className="mt-4 divide-y divide-line text-sm">
             {rows.map(([k, v]) => (
               <div key={k} className="grid grid-cols-[5.5rem_1fr] gap-3 py-2.5">
@@ -57,10 +58,10 @@ export default function About() {
 
       <ul className="mt-14 grid gap-4 md:grid-cols-3">
         {A.cards.map((c, i) => (
-          <Reveal as="li" key={c.tag} delay={i * 70} className="group rounded-xl border border-line bg-card p-6 transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-sky/60">
+          <Reveal as="li" key={c.tag} delay={i * 70} className="px-card group p-6 transition-transform duration-150 hover:-translate-y-1">
             <div className="flex items-start justify-between text-sky">
               <span className="transition-transform duration-300 group-hover:translate-x-1">{ART[i]}</span>
-              <span className="font-mono text-[11px] tracking-[0.16em] text-muted">{c.tag}</span>
+              <span className="font-pixel text-[9px] text-muted" lang="en">{c.tag}</span>
             </div>
             <h3 className="mt-6 text-lg font-semibold">{c.title}</h3>
             <p className="mt-2 text-[15px] text-muted">{c.body}</p>

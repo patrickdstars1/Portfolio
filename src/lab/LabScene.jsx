@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import RetroConsole from './RetroConsole.jsx'
 import GameCartridge, { poseCartridge } from './GameCartridge.jsx'
 import CRTScreen from './CRTScreen.jsx'
-import { buildCameraKeys, PART_IDS, partOffset, powerAt, sampleCamera } from './ExplodedView.js'
+import { buildSimpleKeys, focusCamera, PART_IDS, partOffset, powerAt, sampleCamera } from './ExplodedView.js'
 import { shadowTexture } from './textures.js'
 
 const BG = '#05070c'
@@ -40,7 +40,7 @@ function Rig({ sim, onPower }) {
   const consoleState = useRef({ btn: 0, led: 0 })
   const screen = useRef({ mode: 'off', bootT: 0, time: 0, glitch: 0, brightness: 0, collapse: 1 })
   const base = useRef(null)
-  const keys = useMemo(() => buildCameraKeys(size.width / size.height), [size.width, size.height])
+  const keys = useMemo(() => buildSimpleKeys(size.width / size.height), [size.width, size.height])
   const v = useMemo(() => ({ off: new THREE.Vector3(), pos: new THREE.Vector3(), tgt: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3(), look: new THREE.Vector3(), cur: null }), [])
   const pointer = useRef({ x: 0, y: 0 })
   const shadowTex = useMemo(() => shadowTexture(), [])
@@ -85,20 +85,17 @@ function Rig({ sim, onPower }) {
     if (tv.current) { tv.current.position.x = -st.away * 9; tv.current.position.z = -st.away * 3; tv.current.visible = st.away < 0.995 }
     if (shadow.current) shadow.current.material.opacity = 0.9 - st.away * 0.5
 
-    // --- camera
-    const shift = sampleCamera(keys, p, v.pos, v.tgt)
-    const wide = size.width / size.height > 1.05
+    // --- camera: close-up of the selected part, otherwise the scripted path
+    if (sim.focus >= 0) focusCamera(sim.focus, size.width / size.height, v.pos, v.tgt)
+    else sampleCamera(keys, p, v.pos, v.tgt)
     v.look.subVectors(v.tgt, v.pos)
     const dist = v.look.length()
     v.right.crossVectors(v.look, camera.up).normalize()
     v.up.crossVectors(v.right, v.look).normalize()
-    // keep the part clear of the info panel: left on wide screens, bottom on tall ones
-    if (wide) { v.pos.addScaledVector(v.right, -shift * dist * 0.17); v.tgt.addScaledVector(v.right, -shift * dist * 0.17) }
-    else { v.pos.addScaledVector(v.up, -shift * dist * 0.2); v.tgt.addScaledVector(v.up, -shift * dist * 0.2) }
     // gentle pointer parallax
     v.pos.addScaledVector(v.right, pointer.current.x * dist * 0.025).addScaledVector(v.up, -pointer.current.y * dist * 0.018)
     if (!v.cur) v.cur = { pos: v.pos.clone(), tgt: v.tgt.clone() }
-    const k = 1 - Math.exp(-dt * 5)
+    const k = 1 - Math.exp(-dt * 4)
     v.cur.pos.lerp(v.pos, k); v.cur.tgt.lerp(v.tgt, k)
     camera.position.copy(v.cur.pos)
     camera.lookAt(v.cur.tgt)
@@ -121,10 +118,11 @@ function Rig({ sim, onPower }) {
   )
 }
 
-export default function LabScene({ sim, onPower }) {
+export default function LabScene({ sim, onPower, active = true }) {
   const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches
   return (
     <Canvas
+      frameloop={active ? 'always' : 'never'}
       dpr={[1, mobile ? 1.5 : 1.75]}
       camera={{ fov: 34, near: 0.1, far: 120, position: [1.0, 3.7, 11.4] }}
       gl={{ antialias: !mobile, powerPreference: 'high-performance' }}

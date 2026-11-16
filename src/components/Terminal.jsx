@@ -4,7 +4,7 @@ import { skillGroups } from '../data/skills.js'
 import { experience } from '../data/experience.js'
 import { projects } from '../data/projects.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
-import { openLab } from '../hooks/useRoute.js'
+import { scrollToId } from '../lib/scroll.js'
 
 let lineId = 0
 const line = (text, kind = 'out') => ({ id: ++lineId, text, kind })
@@ -43,7 +43,7 @@ export default function Terminal() {
       line(`linkedin  ${profile.links.linkedin}`),
       line(`github    ${profile.links.github}`),
     ],
-    lab: () => { setTimeout(openLab, 350); return [line(T.opening, 'accent')] },
+    lab: () => { setTimeout(() => scrollToId('lab'), 250); return [line(T.opening, 'accent')] },
   }), [T, pick])
 
   const run = (raw) => {
@@ -72,16 +72,16 @@ export default function Terminal() {
 
   return (
     <div
-      className="overflow-hidden rounded-xl border border-[#263447] bg-[#0A0F18] font-mono text-[13px] leading-relaxed shadow-[0_24px_60px_-30px_rgba(0,0,0,0.6)]"
+      className="overflow-hidden border-[3px] border-[#F4F7FC] bg-[#0A0F18] font-mono text-[13px] leading-relaxed shadow-[6px_6px_0_0_#000]"
       onClick={() => inputRef.current?.focus({ preventScroll: true })}
     >
       <div className="flex items-center gap-2 border-b border-[#1C2738] px-4 py-2.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#2B3A50]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#2B3A50]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#FFB47A]" />
+        <span className="h-2.5 w-2.5 bg-[#2B3A50]" />
+        <span className="h-2.5 w-2.5 bg-[#2B3A50]" />
+        <span className="h-2.5 w-2.5 bg-[#FFB47A]" />
         <span className="ml-2 text-xs text-[#7F8EA3]">{T.title}</span>
       </div>
-      <div ref={bodyRef} data-lenis-prevent className="h-72 overflow-y-auto px-4 py-3 sm:h-80" role="log" aria-live="polite">
+      <div ref={bodyRef} data-lenis-prevent className="h-56 overflow-y-auto px-4 py-3 sm:h-64" role="log" aria-live="polite">
         {lines.map((l) => (
           <div key={l.id} className={`whitespace-pre-wrap break-words ${color[l.kind]}`}>
             {l.kind === 'cmd' && <span className="text-[#75CFFF]">❯ </span>}

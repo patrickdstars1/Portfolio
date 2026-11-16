@@ -2,6 +2,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { projects } from '../data/projects.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import Section, { Reveal } from './Section.jsx'
+import { Deco } from './Parallax.jsx'
 import { GithubIcon } from './TechIcon.jsx'
 
 // Abstract previews used until real screenshots are added (set `image` in data/projects.js).
@@ -69,12 +70,12 @@ function Actions({ p }) {
   return (
     <div className="flex flex-wrap gap-2.5">
       {p.url && (
-        <a href={p.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-lg bg-sky px-4 py-2 text-sm font-semibold text-on-accent transition-transform hover:-translate-y-0.5">
+        <a href={p.url} target="_blank" rel="noreferrer" className="px-btn inline-flex items-center gap-1.5 bg-sky px-4 py-2 text-sm font-semibold text-on-accent">
           {P.view}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </a>
       )}
       {p.repo && (
-        <a href={p.repo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-line px-4 py-2 text-sm font-semibold transition-colors hover:border-sky hover:text-sky">
+        <a href={p.repo} target="_blank" rel="noreferrer" className="px-btn inline-flex items-center gap-2 bg-card px-4 py-2 text-sm font-semibold">
           <GithubIcon className="h-4 w-4" />{P.repo}
         </a>
       )}
@@ -85,8 +86,8 @@ function Actions({ p }) {
 function Card({ p, large }) {
   const { t, pick } = useLanguage()
   return (
-    <article className={`group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-card transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-sky/60 ${large ? 'lg:flex-row' : ''}`}>
-      <div className={`relative border-line bg-bg-2 ${large ? 'border-b lg:w-[55%] lg:border-b-0 lg:border-r' : 'border-b'}`}>
+    <article className={`px-card group flex h-full flex-col overflow-hidden transition-transform duration-150 hover:-translate-y-1 ${large ? 'lg:flex-row' : ''}`}>
+      <div className={`relative border-line bg-bg-2 ${large ? 'border-b-[3px] lg:w-[55%] lg:border-b-0 lg:border-r-[3px]' : 'border-b-[3px]'}`}>
         {p.image ? (
           <img src={p.image} alt={pick(p.name)} loading="lazy" className="h-full w-full object-cover" />
         ) : (
@@ -99,7 +100,7 @@ function Card({ p, large }) {
         )}
       </div>
       <div className={`flex flex-1 flex-col ${large ? 'p-7 md:p-9 lg:justify-center' : 'p-6'}`}>
-        {large && <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-orange">{t.projects.featured}</p>}
+        {large && <p className="font-pixel text-[10px] uppercase text-orange">{t.projects.featured}</p>}
         <h3 className={`font-semibold ${large ? 'mt-3 text-2xl md:text-3xl' : 'text-lg'}`}>{pick(p.name)}</h3>
         <p className={`mt-3 text-pretty text-muted ${large ? '' : 'text-[15px]'}`}>{pick(p.description)}</p>
         <ul className="mt-5 flex flex-wrap gap-2">
@@ -116,10 +117,10 @@ export default function Projects() {
   const featured = projects.filter((p) => p.featured)
   const rest = projects.filter((p) => !p.featured)
   return (
-    <Section id="projects" title={t.projects.title} subtitle={t.projects.subtitle} className="bg-bg-2">
-      <div className="space-y-5">
+    <Section id="projects" level="04" title={t.projects.title} subtitle={t.projects.subtitle} className="bg-bg-2" deco={<><Deco kind="coin" speed={0.3} bob className="right-[3%] top-32" /><Deco kind="coin" speed={0.18} bob className="right-[6%] top-48" /><Deco kind="block" speed={-0.25} className="left-[2.5%] top-[60%]" /></>}>
+      <div className="space-y-6">
         {featured.map((p) => <Reveal key={p.id}><Card p={p} large /></Reveal>)}
-        <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {rest.map((p, i) => <Reveal as="li" key={p.id} delay={i * 70}><Card p={p} /></Reveal>)}
         </ul>
       </div>

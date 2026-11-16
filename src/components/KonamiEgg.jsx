@@ -56,12 +56,12 @@ export default function KonamiEgg() {
   if (!open) return null
   return (
     <div className="fixed inset-0 z-[200] grid place-items-center bg-black/70 p-5" onClick={() => setOpen(false)}>
-      <div role="dialog" aria-modal="true" aria-labelledby="konami-title" onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-xl border-2 border-[#75CFFF] bg-[#080B12] p-5 text-center text-[#F4F7FC]">
+      <div role="dialog" aria-modal="true" aria-labelledby="konami-title" onClick={(e) => e.stopPropagation()} className="w-full max-w-md border-4 border-[#75CFFF] bg-[#080B12] p-5 shadow-[8px_8px_0_0_#000] text-center text-[#F4F7FC]">
         <canvas ref={canvasRef} width={160} height={72} className="pixelated w-full rounded" aria-hidden="true" />
-        <h2 id="konami-title" className="mt-5 font-mono text-sm tracking-[0.2em] text-[#FFB47A]">{t.konami.title}</h2>
+        <h2 id="konami-title" className="mt-5 text-xs text-[#FFB47A]" style={{ fontFamily: "'Press Start 2P', monospace" }}>{t.konami.title}</h2>
         <p className="mt-3 text-lg">{t.konami.message}</p>
         <p className="mt-1 text-sm text-[#9BA9BA]">{t.konami.sub}</p>
-        <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="mt-5 rounded-lg bg-[#75CFFF] px-5 py-2.5 font-mono text-sm font-semibold text-[#06202F]">
+        <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="mt-5 border-[3px] border-white bg-[#75CFFF] px-5 py-2.5 font-mono text-sm font-semibold text-[#06202F] shadow-[4px_4px_0_0_#000]">
           {t.konami.close}
         </button>
       </div>

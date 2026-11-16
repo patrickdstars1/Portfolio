@@ -1,5 +1,5 @@
-// Scroll timeline for the lab. Everything in the 3D scene is a pure function of
-// scroll progress p (0..1), so reassembly is exactly disassembly played backwards.
+// Timeline for the lab. Everything in the 3D scene is a pure function of
+// progress p (0..1), so reassembly is exactly disassembly played backwards.
 import { Vector3 } from 'three'
 
 export const PART_IDS = ['topCase', 'buttons', 'cartSlot', 'heatShield', 'motherboard', 'cpu', 'gpu', 'ram', 'components', 'ports', 'bottomCase']
@@ -88,35 +88,6 @@ const FOCUS = [
 const LIFT = 0.8 // how far the stack rises off the bottom casing in the last step
 const PLAY = { pos: [1.0, 3.7, 11.4], tgt: [0.1, 1.0, -0.7] }
 
-// Camera keyframes over p. `portrait` (aspect < 1) pulls everything back.
-export function buildCameraKeys(aspect) {
-  const fPlay = aspect < 1.5 ? Math.min(1.9, 1.5 / aspect) : 1
-  const fPart = aspect < 1 ? Math.min(2.1, 0.95 / aspect) : 1
-  const play = (p, zoom = 1) => ({
-    p,
-    tgt: new Vector3(...PLAY.tgt),
-    pos: new Vector3(...PLAY.pos).sub(new Vector3(...PLAY.tgt)).multiplyScalar(fPlay * zoom).add(new Vector3(...PLAY.tgt)),
-    shift: 0,
-  })
-  const keys = [play(0), play(TL.dim)]
-  const tmp = new Vector3()
-  FOCUS.forEach((f, i) => {
-    const [a, b] = disWindow(i)
-    const tgt = new Vector3(...f.c).add(OFFSET[i])
-    if (CHILD_OF_MB.has(i)) tgt.add(OFFSET[MB])
-    const pos = tmp.set(...f.dir).normalize().multiplyScalar(f.dist * fPart).add(tgt).clone()
-    keys.push({ p: a + (b - a) * 0.42, tgt, pos, shift: 1 })
-    keys.push({ p: a + (b - a) * 0.86, tgt, pos: pos.clone().add(new Vector3(f.dir[0] > 0 ? -0.35 : 0.35, 0.05, 0)), shift: 1 })
-  })
-  const over = (p, x, y, z) => ({ p, tgt: new Vector3(0, 2.7, 0), pos: new Vector3(x, y, z).multiplyScalar(aspect < 1 ? fPart * 1.15 : 1).add(new Vector3(0, 2.7, 0)), shift: 0 })
-  keys.push(over(0.612, 8.0, 0.6, 12.6))
-  keys.push(over(0.74, -7.0, 1.0, 13.0))
-  keys.push({ p: TL.reEnd, tgt: new Vector3(0, 0.7, 0), pos: new Vector3(3.2, 2.9, 6.6).multiplyScalar(aspect < 1 ? fPart : 1), shift: 0 })
-  keys.push(play(TL.bootStart + 0.01))
-  keys.push(play(1, 0.94))
-  return keys
-}
-
 export function sampleCamera(keys, p, pos, tgt) {
   let i = 0
   while (i < keys.length - 2 && p > keys[i + 1].p) i++
@@ -125,17 +96,6 @@ export function sampleCamera(keys, p, pos, tgt) {
   pos.lerpVectors(a.pos, b.pos, k)
   tgt.lerpVectors(a.tgt, b.tgt, k)
   return a.shift + (b.shift - a.shift) * k
-}
-
-// What the overlay UI should show at progress p.
-export function stageAt(p) {
-  if (p < TL.freeze) return { kind: 'play', idx: -1 }
-  if (p < TL.disStart) return { kind: 'shutdown', idx: -1 }
-  if (p < TL.disEnd) return { kind: 'part', idx: Math.min(N - 1, Math.floor((p - TL.disStart) / DW)) }
-  if (p < TL.reStart) return { kind: 'overview', idx: -1 }
-  if (p < TL.reEnd) return { kind: 'reassembly', idx: N - 1 - Math.min(N - 1, Math.floor((p - TL.reStart) / RW)) }
-  if (p < TL.final) return { kind: 'boot', idx: -1 }
-  return { kind: 'final', idx: -1 }
 }
 
 // Console/CRT electrical state derived from p. `time` only drives flicker noise.
@@ -169,3 +129,36 @@ export function powerAt(p, time) {
     away: smooth(TL.off, TL.disStart + 0.012, p) * (1 - smooth(0.84, 0.878, p)),
   }
 }
+
+// ---- Inline (button-driven) mode -------------------------------------------
+// Simple camera path: play view -> wide exploded view -> play view.
+export function buildSimpleKeys(aspect) {
+  const fPlay = aspect < 1.25 ? Math.min(1.6, 1.15 / aspect) : aspect > 1.7 ? 0.74 : 1
+  const f = aspect < 1.2 ? Math.min(2.2, 1.25 / aspect) : 0.9
+  const play = (p) => ({
+    p,
+    tgt: new Vector3(...PLAY.tgt),
+    pos: new Vector3(...PLAY.pos).sub(new Vector3(...PLAY.tgt)).multiplyScalar(fPlay).add(new Vector3(...PLAY.tgt)),
+    shift: 0,
+  })
+  const c = new Vector3(0, 2.9, 0)
+  const over = (p, x, y, z) => ({ p, tgt: c.clone(), pos: new Vector3(x, y, z).multiplyScalar(f).add(c), shift: 0 })
+  return [
+    play(0), play(TL.dim),
+    over(0.2, 8.6, 0.8, 13.4), over(0.612, 6.4, 1.2, 14.4), over(TL.reStart, 6.4, 1.2, 14.4), over(0.84, 8.6, 0.8, 13.4),
+    play(TL.bootStart + 0.01), play(1),
+  ]
+}
+
+// Close-up of part i while the console is fully apart.
+export function focusCamera(i, aspect, pos, tgt) {
+  const f = FOCUS[i]
+  const k = aspect < 1 ? Math.min(2.1, 0.95 / aspect) : 1
+  tgt.set(...f.c).add(OFFSET[i])
+  if (CHILD_OF_MB.has(i)) tgt.add(OFFSET[MB])
+  if (i !== N - 1) tgt.y += LIFT
+  pos.set(...f.dir).normalize().multiplyScalar(f.dist * k).add(tgt)
+}
+
+// Progress values the buttons animate between.
+export const P = { play: 0, shutdownEnd: TL.disStart, apart: 0.612, reStart: TL.reStart, reEnd: TL.reEnd, done: TL.final + 0.01 }

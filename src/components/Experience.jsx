@@ -3,6 +3,7 @@ import { ChevronDown, MapPin } from 'lucide-react'
 import { experience } from '../data/experience.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import Section, { Reveal } from './Section.jsx'
+import { Deco } from './Parallax.jsx'
 
 function Entry({ item, defaultOpen }) {
   const { t, pick } = useLanguage()
@@ -13,16 +14,16 @@ function Entry({ item, defaultOpen }) {
     <li className="relative pl-9 md:pl-12">
       <span
         aria-hidden="true"
-        className={`absolute left-0 top-7 h-[15px] w-[15px] rounded-full border-2 bg-bg ${item.current ? 'border-orange' : 'border-sky'}`}
+        className={`absolute left-0 top-7 h-[16px] w-[16px] border-[3px] bg-bg ${item.current ? 'border-orange' : 'border-sky'}`}
       >
-        {item.current && <span className="absolute inset-[3px] rounded-full bg-orange" style={{ animation: 'pulse-dot 2.4s ease-in-out infinite' }} />}
+        {item.current && <span className="absolute inset-[2px] bg-orange" style={{ animation: 'pulse-dot 1.2s steps(2) infinite' }} />}
       </span>
 
-      <Reveal as="article" className="rounded-xl border border-line bg-card p-6 md:p-7">
+      <Reveal as="article" className="px-card p-6 md:p-7">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs text-muted">
           {item.period && <span>{pick(item.period)}</span>}
-          {item.current && <span className="rounded-full border border-orange/50 px-2 py-0.5 text-orange">{E.current}</span>}
-          {item.freelance && <span className="rounded-full border border-sky/50 px-2 py-0.5 text-sky">{E.freelance}</span>}
+          {item.current && <span className="bg-orange px-2 py-0.5 font-semibold text-[#10131a]">{E.current}</span>}
+          {item.freelance && <span className="bg-sky px-2 py-0.5 font-semibold text-on-accent">{E.freelance}</span>}
         </div>
         <h3 className="mt-3 text-xl font-semibold md:text-2xl">{pick(item.position)}</h3>
         <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[15px]">
@@ -67,7 +68,7 @@ function Entry({ item, defaultOpen }) {
               <ul className="mt-3 grid gap-2 text-[15px] md:grid-cols-2 md:gap-x-8">
                 {pick(item.responsibilities).map((r) => (
                   <li key={r} className="flex gap-2.5">
-                    <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-orange" />
+                    <span aria-hidden="true" className="mt-[0.55em] h-1.5 w-1.5 shrink-0 bg-orange" />
                     <span>{r}</span>
                   </li>
                 ))}
@@ -114,9 +115,9 @@ export default function Experience() {
   }, [])
 
   return (
-    <Section id="experience" title={t.experience.title} subtitle={t.experience.subtitle}>
+    <Section id="experience" level="03" title={t.experience.title} subtitle={t.experience.subtitle} deco={<><Deco kind="heart" speed={0.3} bob className="right-[3.5%] top-40" /><Deco kind="cloud" scale={4} speed={-0.2} className="left-[1%] top-[45%]" /></>}>
       <div className="relative">
-        <div aria-hidden="true" className="absolute bottom-0 left-[7px] top-0 w-px bg-line">
+        <div aria-hidden="true" className="absolute bottom-0 left-[6px] top-0 w-1 bg-line">
           <div ref={fillRef} className="h-full w-full origin-top bg-sky" style={{ transform: 'scaleY(0)' }} />
         </div>
         <ol ref={listRef} className="space-y-6">

@@ -1,11 +1,13 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource-variable/pixelify-sans';
+@import '@fontsource/press-start-2p/latin-400.css';
 @import '@fontsource/prompt/thai-400.css';
 @import '@fontsource/prompt/thai-500.css';
 @import '@fontsource/prompt/thai-600.css';
 @import 'tailwindcss';
 
-/* Theme tokens. Dark is the default identity; light is the alternate. */
+/* Theme tokens. Dark = night level, light = day level. */
 :root,
 :root[data-theme='dark'] {
   --bg: #080b12;
@@ -16,21 +18,23 @@
   --highlight: #a5e1ff;
   --text: #f4f7fc;
   --muted: #9ba9ba;
-  --line: #263447;
+  --line: #2c3c53;
   --on-accent: #06202f;
+  --shadow: #000000;
   color-scheme: dark;
 }
 :root[data-theme='light'] {
-  --bg: #f5f7fa;
-  --bg-2: #ebeff5;
+  --bg: #f1f6fb;
+  --bg-2: #e2edf7;
   --card: #ffffff;
   --sky: #0a6ea8;
   --orange: #b4551a;
   --highlight: #0a5a8a;
   --text: #0e1524;
-  --muted: #536074;
-  --line: #d5dde8;
+  --muted: #4b596d;
+  --line: #0e1524;
   --on-accent: #ffffff;
+  --shadow: #0e1524;
   color-scheme: light;
 }
 
@@ -48,6 +52,38 @@
   /* Inter has no Thai glyphs, so Thai text always falls through to Prompt. */
   --font-sans: 'Inter Variable', 'Prompt', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Noto Sans Thai', sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Prompt', monospace;
+  /* 8-bit display faces. Neither has Thai glyphs, so Thai headings use Prompt. */
+  --font-display: 'Pixelify Sans Variable', 'Prompt', ui-sans-serif, system-ui, sans-serif;
+  --font-pixel: 'Press Start 2P', 'Prompt', ui-monospace, monospace;
+  /* 8-bit: no rounded corners anywhere (rounded-full is unaffected). */
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+}
+
+/* Pixel card: hard border and hard offset shadow. */
+@utility px-card {
+  border: 3px solid var(--line);
+  background: var(--card);
+  box-shadow: 5px 5px 0 0 var(--shadow);
+}
+/* Pixel buttons: sit on a hard shadow and press into it. */
+@utility px-btn {
+  border: 3px solid var(--text);
+  box-shadow: 4px 4px 0 0 var(--shadow);
+  transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
+  &:hover:not(:disabled) { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--shadow); }
+  &:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: 0 0 0 0 var(--shadow); }
+}
+@utility pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+/* Chunky text shadow for display headings. */
+@utility text-pop {
+  text-shadow: 3px 3px 0 color-mix(in srgb, var(--sky) 35%, transparent);
 }
 
 html {
@@ -63,40 +99,30 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
-/* Thai needs a little more leading than Latin. */
 html[lang='th'] body { line-height: 1.75; }
-html[lang='th'] h1, html[lang='th'] h2 { line-height: 1.3; }
+html[lang='th'] h1, html[lang='th'] h2 { line-height: 1.3; font-weight: 600; }
+/* Press Start 2P is very wide: Thai fallback text needs a readable size. */
+html[lang='th'] .font-pixel { font-family: 'Prompt', sans-serif; font-size: 0.8125rem; letter-spacing: 0; font-weight: 500; }
 
-::selection { background: color-mix(in srgb, var(--sky) 35%, transparent); }
+::selection { background: var(--orange); color: #10131a; }
 
 :focus-visible {
-  outline: 2px solid var(--sky);
+  outline: 3px solid var(--orange);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
-/* Fine technical grid used behind the hero. */
-.grid-bg {
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 20%, transparent 75%);
-}
-
-/* Scroll reveal */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+/* Scroll reveal: stepped, like sprite animation. */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.4s steps(4), transform 0.4s steps(4); }
 .reveal.is-in { opacity: 1; transform: none; }
 
-@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-@keyframes caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-@keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
-@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+@keyframes drift { from { background-position-x: 0; } to { background-position-x: var(--tile, 1024px); } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
-
-.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

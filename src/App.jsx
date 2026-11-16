@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import Lenis from 'lenis'
 import Navbar from './components/Navbar.jsx'
 import Hero from './components/Hero.jsx'
@@ -10,12 +10,8 @@ import InteractiveLab from './components/InteractiveLab.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import KonamiEgg from './components/KonamiEgg.jsx'
-import { useRoute } from './hooks/useRoute.js'
 import { useLanguage } from './hooks/useLanguage.jsx'
 import { prefersReducedMotion, setLenis } from './lib/scroll.js'
-
-// The full-screen lab (three.js, GSAP) is only downloaded when it is opened.
-const LabExperience = lazy(() => import('./lab/LabExperience.jsx'))
 
 function Portfolio() {
   const { t } = useLanguage()
@@ -32,11 +28,10 @@ function Portfolio() {
     return () => { cancelAnimationFrame(raf); lenis.destroy(); setLenis(null) }
   }, [])
 
-  // Arriving with a section hash (e.g. returning from the lab) jumps to it.
+  // Arriving with a section hash jumps to that section.
   useEffect(() => {
     const id = window.location.hash.slice(1)
     if (id && !id.startsWith('/')) document.getElementById(id)?.scrollIntoView({ block: 'start' })
-    else window.scrollTo(0, 0)
   }, [])
 
   return (
@@ -59,26 +54,10 @@ function Portfolio() {
   )
 }
 
-function LabFallback() {
-  const { t } = useLanguage()
-  return (
-    <div className="fixed inset-0 grid place-items-center bg-[#05070c] font-mono text-sm text-[#9BA9BA]">
-      {t.labx.loading}
-    </div>
-  )
-}
-
 export default function App() {
-  const route = useRoute()
   return (
     <>
-      {route === 'lab' ? (
-        <Suspense fallback={<LabFallback />}>
-          <LabExperience />
-        </Suspense>
-      ) : (
-        <Portfolio />
-      )}
+      <Portfolio />
       <KonamiEgg />
     </>
   )

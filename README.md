@@ -1,6 +1,6 @@
 # BANK.DEV — Patcharapon Khongmod
 
-Personal portfolio: React + Vite + Tailwind CSS, with a lazy-loaded 3D lab (Three.js, React Three Fiber, GSAP ScrollTrigger).
+Single-page personal portfolio with an 8-bit theme and parallax pixel scenery: React + Vite + Tailwind CSS, with a lazy-loaded 3D lab (Three.js, React Three Fiber, GSAP).
 
 ```bash
 npm install
@@ -26,5 +26,6 @@ The resume PDF is `public/resume/Patcharapon_Khongmod_Resume.pdf`.
 ## Structure
 
 - `src/components/` — portfolio sections, terminal, theme and language switchers
-- `src/lab/` — the BK-8 console experience at `#/lab/retro-console`
+- `src/lab/` — the BK-8 console in the Interactive Lab section (power on, take apart, put back together)
+- `src/lib/pixelScene.js`, `src/lib/parallax.js` — procedural pixel-art scenery and the parallax engine
 - `src/hooks/`, `src/lib/` — language, theme, routing, scroll and sound helpers

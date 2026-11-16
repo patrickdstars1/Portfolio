@@ -13,7 +13,7 @@ const SECTIONS = ['home', 'about', 'skills', 'experience', 'projects', 'lab', 'c
 export function Logo() {
   const [a, b] = profile.brand.split('.')
   return (
-    <span className="font-mono text-[15px] font-semibold tracking-tight">
+    <span lang="en" className="text-[13px] leading-none" style={{ fontFamily: "'Press Start 2P', monospace" }}>
       {a}<span className="text-sky">.{b}</span>
     </span>
   )
@@ -40,7 +40,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 border-b-4 border-line bg-bg">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 md:px-8">
         <a href="#home" onClick={go('home')} aria-label={`${profile.brand} — ${t.nav.home}`}>
           <Logo />
@@ -54,8 +54,8 @@ export default function Navbar() {
                   href={`#${id}`}
                   onClick={go(id)}
                   aria-current={active === id ? 'true' : undefined}
-                  className={`rounded-md px-3 py-2 text-sm transition-colors ${
-                    active === id ? 'text-sky' : 'text-muted hover:text-ink'
+                  className={`px-3 py-2 text-sm transition-colors ${
+                    active === id ? 'bg-sky text-on-accent' : 'text-muted hover:text-ink'
                   }`}
                 >
                   {t.nav[id]}
@@ -70,7 +70,7 @@ export default function Navbar() {
           <ThemeToggle />
           <button
             type="button"
-            className="grid h-9 w-9 place-items-center rounded-md border border-line lg:hidden"
+            className="grid h-9 w-9 place-items-center border-2 border-line lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? t.nav.close : t.nav.menu}
@@ -82,7 +82,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <nav id="mobile-nav" aria-label="Mobile" className="border-t border-line bg-bg lg:hidden">
+        <nav id="mobile-nav" aria-label="Mobile" className="border-t-4 border-line bg-bg lg:hidden">
           <ul className="mx-auto max-w-6xl px-5 py-3">
             {SECTIONS.map((id) => (
               <li key={id}>
@@ -100,9 +100,10 @@ export default function Navbar() {
         </nav>
       )}
 
-      {/* page progress */}
-      <div aria-hidden="true" className="absolute inset-x-0 -bottom-px h-px">
-        <div ref={progressRef} className="h-full origin-left bg-sky" style={{ transform: 'scaleX(0)' }} />
+      {/* page progress, drawn as a segmented XP bar */}
+      <div aria-hidden="true" className="absolute inset-x-0 -bottom-1 h-1 overflow-hidden">
+        <div ref={progressRef} className="h-full origin-left bg-orange" style={{ transform: 'scaleX(0)' }} />
+        <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(to right, transparent 0 10px, var(--bg) 10px 12px)', backgroundSize: '12px 100%' }} />
       </div>
     </header>
   )
