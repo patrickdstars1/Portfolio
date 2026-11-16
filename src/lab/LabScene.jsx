@@ -10,6 +10,7 @@ import CRTScreen from './CRTScreen.jsx'
 import { easeInOutCubic, easeOutBack, easeOutCubic, explodedOffset, layoutCamera, PART_IDS } from './ExplodedView.js'
 import { createPhysics } from './physics.js'
 import { sfx } from '../lib/sound.js'
+import { unlock } from '../lib/achievements.js'
 
 
 function StudioLights({ shadowSize = 2048 }) {
@@ -225,7 +226,7 @@ function Rig({ sim }) {
     <>
       <RetroConsole partsRef={parts} stateRef={consoleState} />
       <GameCartridge innerRef={cart} />
-      <CRTScreen screenRef={screen} groupRef={tv} onTvPower={(on) => { if (sim.tvOn !== on) { sim.tvOn = on; sfx.switch(); (on ? sfx.crtOn : sfx.crtOff)() } }} />
+      <CRTScreen screenRef={screen} groupRef={tv} onTvPower={(on) => { if (sim.tvOn !== on) { sim.tvOn = on; if (!on) unlock('tvoff'); sfx.switch(); (on ? sfx.crtOn : sfx.crtOff)() } }} />
       {/* invisible desk that only shows the shadows falling on it */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow userData={{ noShadow: true }}>
         <planeGeometry args={[60, 60]} />

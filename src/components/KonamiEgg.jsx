@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import { sfx } from '../lib/sound.js'
+import { unlock } from '../lib/achievements.js'
 import { drawText, drawMascot } from '../lib/pixel.js'
 
 const SEQ = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
@@ -19,7 +20,7 @@ export default function KonamiEgg() {
       if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) { pos = 0; return }
       const key = e.key.length === 1 ? e.key.toLowerCase() : e.key
       pos = key === SEQ[pos] ? pos + 1 : key === SEQ[0] ? 1 : 0
-      if (pos === SEQ.length) { pos = 0; setOpen(true); sfx.secret() }
+      if (pos === SEQ.length) { pos = 0; setOpen(true); sfx.secret(); unlock('konami') }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)

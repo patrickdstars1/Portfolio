@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flyerSheet, slimeSprite } from '../lib/pixelScene.js'
 import { sfx } from '../lib/sound.js'
+import { mark } from '../lib/achievements.js'
 import { prefersReducedMotion } from '../lib/scroll.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import { useTheme } from '../hooks/useTheme.jsx'
@@ -55,7 +56,7 @@ function Slime({ scale, bottom }) {
     <button
       ref={el}
       type="button"
-      onClick={() => { setHit(Date.now()); sfx.blip() }}
+      onClick={() => { setHit(Date.now()); sfx.blip(); mark('slime') }}
       aria-label={lang === 'th' ? 'สไลม์ กดเพื่อแกล้ง' : 'Slime. Press to poke it'}
       className="pointer-events-auto absolute z-20 block cursor-pointer"
       style={{ left: `${left}%`, bottom, width: 10 * scale, height: 8 * scale, transition: 'left 0.45s steps(7)' }}
@@ -81,7 +82,7 @@ function Flyer({ scale }) {
     <div className="flyer-path pointer-events-none absolute left-0 top-[26%] z-[5]">
       <button
         type="button"
-        onClick={() => { setLoop(Date.now()); sfx.blip() }}
+        onClick={() => { setLoop(Date.now()); sfx.blip(); mark('flyer') }}
         aria-label={lang === 'th' ? (theme === 'dark' ? 'ค้างคาว กดเพื่อให้ตีลังกา' : 'นก กดเพื่อให้ตีลังกา') : theme === 'dark' ? 'Bat. Press for a loop' : 'Bird. Press for a loop'}
         className={`pointer-events-auto relative block cursor-pointer ${loop ? 'flyer-loop' : ''}`}
         style={{ width: w, height: h }}

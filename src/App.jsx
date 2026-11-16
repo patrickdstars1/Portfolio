@@ -10,6 +10,7 @@ import InteractiveLab from './components/InteractiveLab.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import KonamiEgg from './components/KonamiEgg.jsx'
+import { AchievementLayer } from './components/Achievements.jsx'
 import { useLanguage } from './hooks/useLanguage.jsx'
 import { isEmbed, prefersReducedMotion, setLenis } from './lib/scroll.js'
 import { initCardLight } from './lib/cardLight.js'
@@ -63,6 +64,7 @@ export default function App() {
     <>
       <Portfolio />
       {!isEmbed() && <KonamiEgg />}
+      <AchievementLayer />
     </>
   )
 }

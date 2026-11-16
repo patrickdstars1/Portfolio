@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { drawMascot } from '../lib/pixel.js'
 import { coinSprite } from '../lib/pixelScene.js'
 import { sfx } from '../lib/sound.js'
+import { addCoins, unlock } from '../lib/achievements.js'
 import { prefersReducedMotion } from '../lib/scroll.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 
@@ -117,6 +118,7 @@ export default function Mascot({ scale, bottom, start = 0.12, game = false }) {
         s.vy -= (holding ? HOLD_G : G) * dt
         s.y += s.vy * dt
         if (s.y <= 0) { s.y = 0; s.vy = 0 }
+        if (game && s.y > 56 * scale) unlock('highjump')
       }
 
       // ---- coins
@@ -141,7 +143,7 @@ export default function Mascot({ scale, bottom, start = 0.12, game = false }) {
           return true
         })
         if (changed) setCoins(s.coins)
-        if (got) { setScore((v) => v + got); sfx.coin(); s.happyUntil = now + 0.5; say('+1') }
+        if (got) { setScore((v) => v + got); addCoins(got); sfx.coin(); s.happyUntil = now + 0.5; say('+1') }
       }
 
       // eyes follow the pointer; in the footer, say hi when it comes close

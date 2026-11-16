@@ -7,6 +7,7 @@ import { useScrollProgress } from '../hooks/useScrollProgress.js'
 import { scrollToId } from '../lib/scroll.js'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
+import { AchievementsButton } from './Achievements.jsx'
 
 const SECTIONS = ['home', 'about', 'skills', 'experience', 'projects', 'lab', 'contact']
 
@@ -68,6 +69,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2.5">
           <LanguageSwitcher />
           <ThemeToggle />
+          <AchievementsButton />
           <button
             type="button"
             className="grid h-9 w-9 place-items-center border-2 border-line lg:hidden"

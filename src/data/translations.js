@@ -14,6 +14,7 @@ export const translations = {
       skip: 'Skip to content',
     },
     theme: { toLight: 'Switch to light theme', toDark: 'Switch to dark theme' },
+    achievements: { title: 'Achievements', unlockedToast: 'ACHIEVEMENT UNLOCKED', coins: 'COINS', close: 'Close', reset: 'Reset progress', secret: 'A secret. Keep exploring.' },
     lang: { label: 'Language' },
     hero: {
       label: 'SOFTWARE ENGINEER / FULL STACK DEVELOPER',
@@ -150,6 +151,7 @@ export const translations = {
       skip: 'ข้ามไปที่เนื้อหา',
     },
     theme: { toLight: 'เปลี่ยนเป็นธีมสว่าง', toDark: 'เปลี่ยนเป็นธีมมืด' },
+    achievements: { title: 'Achievements', unlockedToast: 'ACHIEVEMENT UNLOCKED', coins: 'COINS', close: 'ปิด', reset: 'ล้างความคืบหน้า', secret: 'ความลับ ลองสำรวจต่อดู' },
     lang: { label: 'ภาษา' },
     hero: {
       label: 'SOFTWARE ENGINEER / FULL STACK DEVELOPER',

@@ -153,6 +153,12 @@ const ICONS = {
     for (const [x, y] of [[5, 4], [4, 5], [3, 6], [2, 7], [3, 8], [4, 9], [5, 10]]) { R(x, y, 2, 2, c.sky); R(14 - x, y, 2, 2, c.sky) }
     for (const [x, y] of [[9, 3], [8, 5], [8, 7], [7, 9], [7, 11]]) R(x, y, 1, 2, c.orange)
   },
+  trophy: (R, c) => { R(4, 2, 8, 1, c.o); R(3, 3, 10, 5, c.o); R(4, 3, 8, 5, '#FFD84D'); R(5, 4, 1, 3, '#FFF3B0'); R(1, 3, 2, 1, c.o); R(1, 4, 1, 2, c.o); R(2, 6, 1, 1, c.o); R(13, 3, 2, 1, c.o); R(14, 4, 1, 2, c.o); R(13, 6, 1, 1, c.o); R(5, 8, 6, 1, c.o); R(6, 8, 4, 1, '#FFB02E'); R(7, 9, 2, 2, c.o); R(4, 11, 8, 3, c.o); R(5, 12, 6, 1, c.orange) },
+  coin: (R, c) => { R(5, 2, 6, 1, c.o); R(3, 3, 10, 1, c.o); R(2, 4, 12, 8, c.o); R(3, 12, 10, 1, c.o); R(5, 13, 6, 1, c.o); R(5, 3, 6, 10, '#FFD84D'); R(3, 4, 10, 8, '#FFD84D'); R(7, 5, 2, 6, '#B4551A'); R(5, 5, 1, 4, '#FFF3B0') },
+  star: (R, c) => { const rows = ['.......oo.......', '......oyyo......', '......oyyo......', '.oooooyyyyooooo.', 'oyyyyyyyyyyyyyyo', '.oyyyyyyyyyyyyo.', '..oyyyyyyyyyyo..', '...oyyyyyyyyo...', '...oyyyyyyyyo...', '..oyyyyooyyyyo..', '..oyyyo..oyyyo..', '.oyyo......oyyo.', '.ooo........ooo.']; rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') R(x, y + 1, 1, 1, ch === 'o' ? c.o : '#FFD84D') })) },
+  flag: (R, c) => { R(3, 1, 2, 14, c.o); R(5, 2, 9, 7, c.o); R(5, 3, 8, 5, c.orange); R(7, 4, 4, 1, c.white); R(7, 6, 3, 1, c.white); R(1, 14, 6, 1, c.o) },
+  map: (R, c) => { R(1, 3, 14, 11, c.o); R(2, 4, 12, 9, '#FFE0C2'); R(5, 4, 1, 9, c.o); R(10, 4, 1, 9, c.o); R(3, 6, 1, 1, c.sky); R(4, 8, 1, 1, c.sky); R(7, 9, 2, 1, c.sky); R(12, 6, 2, 2, '#E2543E'); R(7, 6, 2, 1, c.orange) },
+  lock: (R, c) => { R(5, 2, 6, 1, c.o); R(4, 3, 2, 4, c.o); R(10, 3, 2, 4, c.o); R(3, 7, 10, 7, c.o); R(4, 8, 8, 5, c.grey); R(7, 9, 2, 3, c.o) },
   heart: (R, c) => {
     const rows = ['.oo...oo.', 'orro.orro', 'orwrorrro', 'orrrrrrro', '.orrrrro.', '..orrro..', '...oro...', '....o....']
     rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') R(x + 3, y + 4, 1, 1, ch === 'o' ? c.o : ch === 'w' ? c.white : '#E2543E') }))

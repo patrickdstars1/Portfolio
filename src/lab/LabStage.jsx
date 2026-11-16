@@ -9,6 +9,7 @@ import { Hammer, Layers, Volume2, VolumeX, Zap } from 'lucide-react'
 import LabScene from './LabScene.jsx'
 import { useLanguage } from '../hooks/useLanguage.jsx'
 import { isSoundEnabled, setSoundEnabled, sfx } from '../lib/sound.js'
+import { unlock } from '../lib/achievements.js'
 
 class Boundary extends Component {
   state = { failed: false }
@@ -73,7 +74,9 @@ export default function LabStage({ active }) {
     if (next === layout) return
     setLayoutState(next); sim.layout = next
     gsap.to(sim.elec, { away: next === 'exploded' ? 1 : 0, duration: 0.6, ease: 'power2.inOut' })
-    if (next === 'assembled') sim.onAssembled = () => { sim.onAssembled = null; sfx.complete(); powerOn() }
+    if (next === 'pile') unlock('break')
+    if (next === 'exploded') unlock('inspect')
+    if (next === 'assembled') sim.onAssembled = () => { sim.onAssembled = null; sfx.complete(); powerOn(); unlock('fix') }
     else { sim.onAssembled = null; powerOff() }
   }
 

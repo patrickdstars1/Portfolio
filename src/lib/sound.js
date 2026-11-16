@@ -75,6 +75,8 @@ export const sfx = {
   // mascot jump and coin pickup
   jump() { const ac = audio(); if (!ac) return; tone(ac, { from: 300, to: 620, dur: 0.12, gain: 0.04 }) },
   coin() { const ac = audio(); if (!ac) return; tone(ac, { from: 988, dur: 0.07, gain: 0.05 }); tone(ac, { from: 1319, start: 0.07, dur: 0.16, gain: 0.05 }) },
+  // achievement unlocked: a short rising fanfare
+  achieve() { const ac = audio(); if (!ac) return; [659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => tone(ac, { from: f, start: i * 0.08, dur: i === 3 ? 0.3 : 0.09, gain: 0.05 })); tone(ac, { type: 'triangle', from: 261.63, start: 0.24, dur: 0.3, gain: 0.05 }) },
   // mascot chirp
   blip() { const ac = audio(); if (!ac) return; tone(ac, { from: 660, to: 990, dur: 0.07, gain: 0.05 }); tone(ac, { from: 990, to: 1320, start: 0.07, dur: 0.09, gain: 0.05 }) },
   // Konami easter egg fanfare

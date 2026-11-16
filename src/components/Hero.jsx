@@ -6,6 +6,7 @@ import PixelScene from './PixelScene.jsx'
 import { skyGradient } from '../lib/pixelScene.js'
 import { useTheme } from '../hooks/useTheme.jsx'
 import { GithubIcon, LinkedinIcon } from './TechIcon.jsx'
+import { unlock } from '../lib/achievements.js'
 
 // Intro copy on the left; the rest of the hero is a small game.
 // Byte follows the pointer, and jumps (Space or click, hold for higher) to
@@ -46,6 +47,7 @@ export default function Hero() {
             <a
               href={profile.resume}
               download
+              onClick={() => unlock('resume')}
               className="px-btn inline-flex items-center gap-2 bg-card px-5 py-3 text-sm font-semibold"
             >
               <Download className="h-4 w-4" aria-hidden="true" />

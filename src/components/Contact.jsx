@@ -5,6 +5,7 @@ import { useLanguage } from '../hooks/useLanguage.jsx'
 import { PixelRule, Reveal } from './Section.jsx'
 import { Deco } from './Parallax.jsx'
 import { GithubIcon, LinkedinIcon } from './TechIcon.jsx'
+import { unlock } from '../lib/achievements.js'
 
 async function copyText(text) {
   try { await navigator.clipboard.writeText(text); return true } catch {}
@@ -21,7 +22,7 @@ export default function Contact() {
   const C = t.contact
   const [copied, setCopied] = useState(false)
   const copy = async () => {
-    if (await copyText(profile.email)) { setCopied(true); setTimeout(() => setCopied(false), 2000) }
+    if (await copyText(profile.email)) { unlock('hello'); setCopied(true); setTimeout(() => setCopied(false), 2000) }
   }
   const links = [
     { key: 'linkedin', Icon: LinkedinIcon, label: C.linkedin, sub: C.linkedinSub, href: profile.links.linkedin },
@@ -60,7 +61,7 @@ export default function Contact() {
             </div>
             <p className="mt-4 break-all text-[17px] font-medium">{profile.email}</p>
             <div className="mt-6 flex flex-wrap gap-2.5">
-              <a href={`mailto:${profile.email}`} className="px-btn inline-flex items-center gap-2 bg-sky px-4 py-2.5 text-sm font-semibold text-on-accent">
+              <a href={`mailto:${profile.email}`} onClick={() => unlock('hello')} className="px-btn inline-flex items-center gap-2 bg-sky px-4 py-2.5 text-sm font-semibold text-on-accent">
                 {C.send}
               </a>
               <button type="button" onClick={copy} className="px-btn inline-flex items-center gap-2 bg-card px-4 py-2.5 text-sm font-semibold">

@@ -152,6 +152,8 @@ html.embed::-webkit-scrollbar { display: none; }
 @keyframes fly-bob { 0%, 100% { margin-top: 0; } 50% { margin-top: 28px; } }
 @keyframes flap { from { background-position-x: 0; } to { background-position-x: calc(var(--w) * -2); } }
 @keyframes loop-the-loop { 0% { transform: translate(0, 0) rotate(0); } 50% { transform: translate(0, -46px) rotate(-180deg); } 100% { transform: translate(0, 0) rotate(-360deg); } }
+@keyframes toast-in { 0% { transform: translateY(24px); opacity: 0; } 12% { transform: translateY(0); opacity: 1; } 88% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(24px); opacity: 0; } }
+.toast-in { animation: toast-in 3.4s steps(28) forwards; }
 @keyframes coin-spin { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.25); } }
 .coin { animation: coin-spin 0.7s steps(4) infinite; }
 @keyframes block-bump { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(-10px); } }
