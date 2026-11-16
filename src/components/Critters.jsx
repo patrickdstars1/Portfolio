@@ -1,9 +1,8 @@
 // Supporting cast for the hero playground. Each one reacts to the pointer:
 //   Slime  - hops away when the pointer comes close, squishes when clicked
 //   Flyer  - a bat (night) or bird (day) that crosses the sky and loops when clicked
-//   Block  - a "?" block that pays out a coin every time it is bumped
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { blockSprite, coinSprite, flyerSheet, slimeSprite } from '../lib/pixelScene.js'
+import { flyerSheet, slimeSprite } from '../lib/pixelScene.js'
 import { sfx } from '../lib/sound.js'
 import { prefersReducedMotion } from '../lib/scroll.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
@@ -79,7 +78,7 @@ function Flyer({ scale }) {
   }, [loop])
   const w = sheet.w * scale, h = sheet.h * scale
   return (
-    <div className="flyer-path pointer-events-none absolute left-0 top-[26%] z-20">
+    <div className="flyer-path pointer-events-none absolute left-0 top-[26%] z-[5]">
       <button
         type="button"
         onClick={() => { setLoop(Date.now()); sfx.blip() }}
@@ -94,43 +93,11 @@ function Flyer({ scale }) {
   )
 }
 
-function Block({ scale, bottom, onCoin }) {
-  const { lang } = useLanguage()
-  const block = useMemo(() => blockSprite(), [])
-  const coin = useMemo(() => coinSprite(), [])
-  const [bump, setBump] = useState(0)
-  useEffect(() => {
-    if (!bump) return
-    const id = setTimeout(() => setBump(0), 600)
-    return () => clearTimeout(id)
-  }, [bump])
-  return (
-    <button
-      type="button"
-      onClick={() => { setBump(Date.now()); onCoin(); sfx.connect(); sfx.blip() }}
-      aria-label={lang === 'th' ? 'กล่องปริศนา กดเพื่อรับเหรียญ' : 'Mystery block. Press for a coin'}
-      className="pointer-events-auto absolute left-[66%] z-20 block cursor-pointer sm:left-[44%]"
-      style={{ bottom, width: block.w * scale, height: block.h * scale }}
-    >
-      <img key={bump} src={block.url} alt="" className={`pixelated block h-full w-full ${bump ? 'block-bump' : ''}`} />
-      {bump > 0 && <img key={`c${bump}`} src={coin.url} alt="" width={coin.w * scale} height={coin.h * scale} className="coin-pop pixelated absolute bottom-full left-1/2 block" />}
-    </button>
-  )
-}
-
 export default function Critters({ scale, ground }) {
-  const { t } = useLanguage()
-  const [coins, setCoins] = useState(0)
   return (
     <>
       <Flyer scale={scale} />
-      <Block scale={scale} bottom={ground + 36 * scale} onCoin={() => setCoins((c) => c + 1)} />
       <Slime scale={scale} bottom={ground - scale} />
-      {coins > 0 && (
-        <p aria-live="polite" style={pixelFont} className="pointer-events-none absolute left-4 top-20 z-20 text-[10px] leading-none text-white [text-shadow:2px_2px_0_rgba(0,0,0,0.6)] sm:left-8">
-          <span className="font-pixel">{t.hero.coins}</span> × {String(coins).padStart(2, '0')}
-        </p>
-      )}
     </>
   )
 }

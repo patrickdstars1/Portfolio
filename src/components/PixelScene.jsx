@@ -74,7 +74,7 @@ export default function PixelScene({ variant = 'hero' }) {
 
   return (
     <>
-    <div aria-hidden="true" className="pixelated pointer-events-none absolute inset-0 overflow-hidden">
+    <div aria-hidden="true" className="pixelated pointer-events-none absolute inset-0 overflow-hidden" style={{ '--ground': `${G}px` }}>
       {hero && (
         <>
           {/* stars / clouds drift slowly and barely move with scroll */}
@@ -82,7 +82,7 @@ export default function PixelScene({ variant = 'hero' }) {
             <div className="h-full w-full" style={{ ...tile(art.sky, S, 160), backgroundPosition: 'left top', '--tile': `${TILE * S}px`, animation: theme === 'light' ? 'drift 90s linear infinite' : undefined }} />
           </Parallax>
           {theme === 'dark' && <ShootingStars px={S} />}
-          <Parallax speed={0.45} className="absolute right-[12%] top-[16%] sm:right-[16%]">
+          <Parallax speed={0.45} className="absolute right-[16%] top-[16%] hidden sm:block">
             <img src={art.orb} alt="" width={28 * S} height={28 * S} className="pixelated block" />
           </Parallax>
         </>
@@ -104,8 +104,8 @@ export default function PixelScene({ variant = 'hero' }) {
       {hero ? (
         <>
           {/* props standing on the ground */}
-          <img src={art.sign.url} alt="" width={art.sign.w * S} height={art.sign.h * S} className="pixelated absolute left-[14%] block sm:left-[20%]" style={{ bottom: G - S }} />
-          <img src={art.lamp.url} alt="" width={art.lamp.w * S} height={art.lamp.h * S} className="pixelated absolute left-[52%] hidden sm:block" style={{ bottom: G - S }} />
+          <img src={art.sign.url} alt="" width={art.sign.w * S} height={art.sign.h * S} className="pixelated absolute left-[34%] block sm:left-[58%] lg:left-[56%]" style={{ bottom: G - S }} />
+          <img src={art.lamp.url} alt="" width={art.lamp.w * S} height={art.lamp.h * S} className="pixelated absolute left-[84%] hidden sm:block" style={{ bottom: G - S }} />
           <img src={art.bush.url} alt="" width={art.bush.w * S} height={art.bush.h * S} className="pixelated absolute left-[2%] block" style={{ bottom: G - S }} />
           <img src={art.bush.url} alt="" width={art.bush.w * S} height={art.bush.h * S} className="pixelated absolute left-[74%] block" style={{ bottom: G - S }} />
           {[8, 33, 45, 67, 88].map((left, i) => (
@@ -118,7 +118,7 @@ export default function PixelScene({ variant = 'hero' }) {
     </div>
     {hero && <Critters scale={S} ground={G} />}
     {/* the mascot sits above the page content so it can be clicked */}
-    <Mascot scale={S} bottom={G - S} start={hero ? 0.12 : 0.3} />
+    <Mascot scale={S} bottom={G - S} start={hero ? 0.6 : 0.3} game={hero} />
     </>
   )
 }

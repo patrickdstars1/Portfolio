@@ -1,7 +1,7 @@
 // The 3D scene for the full-screen lab. Reads the mutable `sim` object every frame;
 // React never re-renders during the animation.
 import { useEffect, useMemo, useRef } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, events as createPointerEvents, useFrame, useThree } from '@react-three/fiber'
 import { Environment, Lightformer } from '@react-three/drei'
 import * as THREE from 'three'
 import RetroConsole from './RetroConsole.jsx'
@@ -45,6 +45,49 @@ function Rig({ sim }) {
   const anim = useRef(null) // per-part animation state, created once the meshes exist
   const v = useMemo(() => ({ off: new THREE.Vector3(), pos: new THREE.Vector3(), tgt: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3(), look: new THREE.Vector3(), cur: null }), [])
   const pointer = useRef({ x: 0, y: 0 })
+  const tvK = useRef(1)
+  const gl = useThree((st) => st.gl)
+  // orbit state for the "view parts" layout: angles around the target, and zoom
+  const orbit = useRef({ theta: 0, phi: 0, zoom: 1, ready: false, drag: null })
+
+  // While viewing parts: drag to orbit, wheel to zoom. Only inside this section.
+  useEffect(() => {
+    const host = gl.domElement.closest('section')
+    if (!host) return
+    const o = orbit.current
+    const blocked = (el) => el instanceof Element && el.closest('a, button, iframe')
+    const viewing = () => sim.layout === 'exploded'
+    const down = (e) => {
+      if (!viewing() || e.button !== 0 || blocked(e.target)) return
+      o.drag = { x: e.clientX, y: e.clientY, id: e.pointerId }
+      host.style.cursor = 'grabbing'
+    }
+    const move = (e) => {
+      if (!o.drag || e.pointerId !== o.drag.id) return
+      o.theta -= (e.clientX - o.drag.x) * 0.006
+      o.phi = Math.min(1.5, Math.max(0.3, o.phi - (e.clientY - o.drag.y) * 0.005))
+      o.drag.x = e.clientX; o.drag.y = e.clientY
+    }
+    const up = () => { if (o.drag) { o.drag = null; host.style.cursor = viewing() ? 'grab' : '' } }
+    const wheel = (e) => {
+      if (!viewing() || blocked(e.target)) return
+      const next = Math.min(1.7, Math.max(0.4, o.zoom * Math.exp(e.deltaY * 0.0012)))
+      if (next === o.zoom) return // at the limit: let the page scroll on
+      o.zoom = next
+      e.preventDefault()
+    }
+    host.addEventListener('pointerdown', down)
+    window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
+    host.addEventListener('wheel', wheel, { passive: false })
+    return () => {
+      host.removeEventListener('pointerdown', down); window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up)
+      host.removeEventListener('wheel', wheel)
+      host.style.cursor = ''; host.style.touchAction = ''; host.removeAttribute('data-lenis-prevent')
+    }
+  }, [gl, sim])
   const physics = useRef(null)
   const lastHit = useRef(0)
   const scene = useThree((st) => st.scene)
@@ -94,7 +137,9 @@ function Rig({ sim }) {
     const sc = screen.current
     if (e.mode === 'title' && e.glitch === 0) sc.time += dt
     sc.mode = e.mode; sc.bootT = e.bootT; sc.glitch = e.glitch
-    sc.brightness = e.brightness; sc.collapse = e.collapse
+    // the TV has its own power: knobs on its front panel switch it on and off
+    tvK.current += ((sim.tvOn ? 1 : 0) - tvK.current) * Math.min(1, dt * 14)
+    sc.brightness = e.brightness * tvK.current; sc.collapse = Math.max(e.collapse, 1 - tvK.current)
 
     // --- parts
     if (!anim.current && parts.current.topCase) {
@@ -143,14 +188,34 @@ function Rig({ sim }) {
     // --- camera: one view per layout
     const aspect = size.width / size.height
     layoutCamera(sim.layout, aspect, v.pos, v.tgt)
+    const o = orbit.current
+    const viewing = sim.layout === 'exploded'
+    if (viewing !== o.ready) {
+      // entering or leaving the parts view: start from the default angle, and
+      // hand wheel/drag gestures to the orbit (or back to the page)
+      o.ready = viewing
+      const host = gl.domElement.closest('section')
+      if (viewing) {
+        v.look.subVectors(v.pos, v.tgt)
+        o.theta = Math.atan2(v.look.x, v.look.z); o.phi = Math.acos(v.look.y / v.look.length()); o.zoom = 1
+        host?.setAttribute('data-lenis-prevent', ''); if (host) { host.style.cursor = 'grab'; host.style.touchAction = 'pan-y' }
+      } else {
+        o.drag = null
+        host?.removeAttribute('data-lenis-prevent'); if (host) { host.style.cursor = ''; host.style.touchAction = '' }
+      }
+    }
+    if (viewing) {
+      const r = v.look.subVectors(v.pos, v.tgt).length() * o.zoom
+      v.pos.set(Math.sin(o.phi) * Math.sin(o.theta), Math.cos(o.phi), Math.sin(o.phi) * Math.cos(o.theta)).multiplyScalar(r).add(v.tgt)
+    }
     v.look.subVectors(v.tgt, v.pos)
     const dist = v.look.length()
     v.right.crossVectors(v.look, camera.up).normalize()
     v.up.crossVectors(v.right, v.look).normalize()
     // gentle pointer parallax
-    v.pos.addScaledVector(v.right, pointer.current.x * dist * 0.025).addScaledVector(v.up, -pointer.current.y * dist * 0.018)
+    if (!viewing) v.pos.addScaledVector(v.right, pointer.current.x * dist * 0.025).addScaledVector(v.up, -pointer.current.y * dist * 0.018)
     if (!v.cur) v.cur = { pos: v.pos.clone(), tgt: v.tgt.clone() }
-    const k = 1 - Math.exp(-dt * 4.5)
+    const k = 1 - Math.exp(-dt * (viewing && o.drag ? 14 : 4.5))
     v.cur.pos.lerp(v.pos, k); v.cur.tgt.lerp(v.tgt, k)
     camera.position.copy(v.cur.pos)
     camera.lookAt(v.cur.tgt)
@@ -160,7 +225,7 @@ function Rig({ sim }) {
     <>
       <RetroConsole partsRef={parts} stateRef={consoleState} />
       <GameCartridge innerRef={cart} />
-      <CRTScreen screenRef={screen} groupRef={tv} />
+      <CRTScreen screenRef={screen} groupRef={tv} onTvPower={(on) => { if (sim.tvOn !== on) { sim.tvOn = on; sfx.switch(); (on ? sfx.crtOn : sfx.crtOff)() } }} />
       {/* invisible desk that only shows the shadows falling on it */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow userData={{ noShadow: true }}>
         <planeGeometry args={[60, 60]} />
@@ -170,12 +235,22 @@ function Rig({ sim }) {
   )
 }
 
-export default function LabScene({ sim, active = true }) {
+export default function LabScene({ sim, active = true, eventSource }) {
   const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches
   return (
     <Canvas
       shadows
       style={{ pointerEvents: 'none' }} // clicks go to the page and to the site on the TV
+      eventSource={eventSource} // 3D clicks (TV knobs) are picked up from the section instead
+      events={(store) => ({
+        ...createPointerEvents(store),
+        // the event source is the whole section, so measure against the canvas itself
+        compute: (event, state) => {
+          const r = state.gl.domElement.getBoundingClientRect()
+          state.pointer.set(((event.clientX - r.left) / r.width) * 2 - 1, -((event.clientY - r.top) / r.height) * 2 + 1)
+          state.raycaster.setFromCamera(state.pointer, state.camera)
+        },
+      })}
       frameloop={active ? 'always' : 'never'}
       dpr={[1, mobile ? 1.5 : 1.75]}
       camera={{ fov: 34, near: 0.1, far: 120, position: [1.0, 3.7, 11.4] }}

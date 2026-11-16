@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import Lenis from 'lenis'
 import Navbar from './components/Navbar.jsx'
 import Hero from './components/Hero.jsx'
-import Intro from './components/Intro.jsx'
 import About from './components/About.jsx'
 import Skills from './components/Skills.jsx'
 import Experience from './components/Experience.jsx'
@@ -47,7 +46,6 @@ function Portfolio() {
       <Navbar />
       <main id="main">
         <Hero />
-        <Intro />
         <About />
         <Skills />
         <Experience />

@@ -68,7 +68,7 @@ const SITE_W = 640
 const SITE_H = 500
 const siteUrl = () => `${window.location.pathname}?embed=tv`
 
-export default function CRTScreen({ screenRef, groupRef }) {
+export default function CRTScreen({ screenRef, groupRef, onTvPower }) {
   const [showSite, setShowSite] = useState(false)
   const siteOn = useRef(false)
   const glow = useRef()
@@ -99,7 +99,8 @@ export default function CRTScreen({ screenRef, groupRef }) {
       ctx, map, screen, tube,
       shell: M({ color: '#2b2d33', roughness: 0.7 }),
       bezel: M({ color: '#141518', roughness: 0.6 }),
-      knob: M({ color: '#b9bec6', metalness: 0.9, roughness: 0.35 }),
+      knob: M({ color: '#d0342c', roughness: 0.45 }),
+      knobMark: M({ color: '#ffffff', roughness: 0.5 }),
       led: M({ color: '#1a0f08', emissive: '#ffb47a', emissiveIntensity: 0 }),
       boxFront: M({ map: coverTexture(false), roughness: 0.5 }),
       boxSide: M({ color: '#0B1030', roughness: 0.6 }),
@@ -109,7 +110,7 @@ export default function CRTScreen({ screenRef, groupRef }) {
 
   useEffect(() => () => {
     res.map.dispose(); res.tube.dispose(); res.boxFront.map.dispose()
-    ;['screen', 'shell', 'bezel', 'knob', 'led', 'boxFront', 'boxSide', 'boxEdge'].forEach((k) => res[k].dispose())
+    ;['screen', 'shell', 'bezel', 'knob', 'knobMark', 'led', 'boxFront', 'boxSide', 'boxEdge'].forEach((k) => res[k].dispose())
   }, [res])
 
   useFrame((state) => {
@@ -156,7 +157,22 @@ export default function CRTScreen({ screenRef, groupRef }) {
         {/* control panel */}
         <mesh material={res.bezel} position={[1.5, 1.66, 1.355]}><boxGeometry args={[0.72, 2.4, 0.03]} /></mesh>
         {[2.35, 1.85].map((y) => (
-          <mesh key={y} material={res.knob} position={[1.5, y, 1.42]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.16, 0.18, 0.12, 24]} /></mesh>
+          <group key={y} position={[1.5, y, 1.42]}>
+            {/* top knob switches the TV on, bottom knob switches it off */}
+            <mesh
+              material={res.knob}
+              rotation={[Math.PI / 2, 0, 0]}
+              onClick={(e) => { e.stopPropagation(); onTvPower?.(y > 2) }}
+              onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+              onPointerOut={() => { document.body.style.cursor = '' }}
+            >
+              <cylinderGeometry args={[0.18, 0.2, 0.14, 24]} />
+            </mesh>
+            {/* "|" for on, "O" for off */}
+            {y > 2
+              ? <mesh material={res.knobMark} position={[0, 0, 0.072]}><boxGeometry args={[0.035, 0.16, 0.004]} /></mesh>
+              : <mesh material={res.knobMark} position={[0, 0, 0.072]}><ringGeometry args={[0.06, 0.09, 20]} /></mesh>}
+          </group>
         ))}
         {Array.from({ length: 9 }, (_, i) => (
           <mesh key={i} material={res.shell} position={[1.5, 1.35 - i * 0.09, 1.372]}><boxGeometry args={[0.5, 0.03, 0.01]} /></mesh>

@@ -23,10 +23,14 @@ export default function LabStage({ active }) {
   const [sound, setSound] = useState(isSoundEnabled)
   const power = useRef(null)
   const started = useRef(false)
+  const stage = useRef(null)
+  const [host, setHost] = useState(null)
+  useEffect(() => { setHost(stage.current?.closest('section') ?? null) }, [])
 
   // Mutable state read by the 3D scene every frame.
   const sim = useMemo(() => ({
     layout: 'assembled',
+    tvOn: true,
     reduced: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     onAssembled: null,
     elec: { btn: 0, led: 0, cart: 0, brightness: 0, collapse: 1, mode: 'off', bootT: 0, glitch: 0, away: 0 },
@@ -90,13 +94,14 @@ export default function LabStage({ active }) {
   return (
     <>
       {/* the scene fills the whole section, behind the heading and buttons */}
-      <div className="lab-canvas pointer-events-none absolute inset-0 isolate z-0">
+      <div ref={stage} className="lab-canvas pointer-events-none absolute inset-0 isolate z-0">
         <Boundary fallback={<p className="grid h-full place-items-center px-6 text-center font-mono text-sm text-muted">{L.error}</p>}>
-          <LabScene sim={sim} active={active} />
+          {host && <LabScene sim={sim} active={active} eventSource={host} />}
         </Boundary>
       </div>
 
-      <div role="group" aria-label={L.controls} className="relative mx-auto mt-auto flex w-full max-w-3xl flex-wrap items-stretch justify-center gap-3 px-5 md:px-8">
+      <p className={`pointer-events-none relative mx-auto mt-auto pb-3 text-center font-pixel text-[9px] leading-relaxed text-muted ${layout === 'exploded' ? '' : 'invisible'}`}>{L.orbitHint}</p>
+      <div role="group" aria-label={L.controls} className="relative mx-auto flex w-full max-w-3xl flex-wrap items-stretch justify-center gap-3 px-5 md:px-8">
         {buttons.map(({ id, label, Icon }, i) => (
           <button key={id} type="button" onClick={() => go(id)} aria-pressed={layout === id}
             className={`px-btn flex min-w-[9.5rem] flex-1 items-center justify-center gap-2.5 px-4 py-3.5 font-pixel text-[11px] uppercase ${layout === id ? 'bg-orange text-[#10131a]' : 'bg-sky text-on-accent'}`}>
