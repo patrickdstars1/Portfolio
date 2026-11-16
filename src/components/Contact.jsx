@@ -35,12 +35,26 @@ export default function Contact() {
           <p className="mt-5 text-lg text-muted">{C.body}</p>
         </Reveal>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
+        <Reveal className="mt-12">
+          <h3 className="font-mono text-xs uppercase tracking-[0.16em] text-muted">{C.servicesTitle}</h3>
+          <ul className="mt-4 grid gap-x-8 gap-y-5 border-y border-line py-6 md:grid-cols-3">
+            {C.services.map((sv) => (
+              <li key={sv.title}>
+                <p className="flex items-center gap-2.5 font-semibold">
+                  <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange" />{sv.title}
+                </p>
+                <p className="mt-1.5 text-[15px] text-muted">{sv.body}</p>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+
+        <div className="mt-8 grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
           <Reveal className="rounded-xl border border-line bg-card p-6 md:p-7">
             <div className="flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.16em] text-muted">
               <Mail className="h-4 w-4 text-sky" aria-hidden="true" />{C.email}
             </div>
-            <p className="mt-4 break-all text-lg font-medium md:text-xl">{profile.email}</p>
+            <p className="mt-4 break-all text-[17px] font-medium">{profile.email}</p>
             <div className="mt-6 flex flex-wrap gap-2.5">
               <a href={`mailto:${profile.email}`} className="inline-flex items-center gap-2 rounded-lg bg-sky px-4 py-2.5 text-sm font-semibold text-on-accent transition-transform hover:-translate-y-0.5">
                 {C.send}

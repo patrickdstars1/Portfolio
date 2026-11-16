@@ -98,6 +98,12 @@ export const translations = {
     contact: {
       title: 'Contact',
       heading: 'Let’s create something great.',
+      servicesTitle: 'Freelance work I take on',
+      services: [
+        { title: 'Business websites & landing pages', body: 'From requirements to a finished site you can run yourself.' },
+        { title: 'Responsive frontend', body: 'Interfaces built with React or Next.js that work on desktop, tablet and mobile.' },
+        { title: 'Wix sites & customisation', body: 'Setting up a new Wix site or reworking an existing one.' },
+      ],
       body: 'Have an idea, a project, or an opportunity? I’d love to hear from you.',
       email: 'Email',
       send: 'Write an email',
@@ -264,6 +270,12 @@ export const translations = {
     contact: {
       title: 'ติดต่อ',
       heading: 'มาสร้างสิ่งใหม่ ๆ ไปด้วยกัน',
+      servicesTitle: 'งาน freelance ที่รับทำ',
+      services: [
+        { title: 'เว็บไซต์ธุรกิจและ landing page', body: 'ตั้งแต่รับ requirement จนได้เว็บที่คุณดูแลต่อเองได้' },
+        { title: 'Responsive frontend', body: 'พัฒนา interface ด้วย React หรือ Next.js ให้ใช้ได้ทั้ง desktop, tablet และมือถือ' },
+        { title: 'เว็บ Wix และการปรับแต่ง', body: 'สร้างเว็บ Wix ใหม่ หรือปรับปรุงเว็บเดิมที่มีอยู่' },
+      ],
       body: 'มีไอเดีย โปรเจกต์ หรือโอกาสดี ๆ อยากพูดคุยกันไหมครับ? ติดต่อผมได้เลย',
       email: 'อีเมล',
       send: 'เขียนอีเมล',
