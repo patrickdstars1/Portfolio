@@ -31,6 +31,20 @@ export const projects = [
     repo: null,
   },
   {
+    id: 'olympus',
+    name: { en: 'Olympus Trader app', th: 'Olympus Trader app' },
+    // Only the name is confirmed so far. Add description, tech and links when ready.
+    description: {
+      en: 'Details coming soon.',
+      th: 'รายละเอียดจะตามมาเร็ว ๆ นี้',
+    },
+    tech: [],
+    preview: 'trading',
+    image: null,
+    url: null,
+    repo: null,
+  },
+  {
     id: 'web',
     name: { en: 'Websites for clients', th: 'เว็บไซต์สำหรับลูกค้า' },
     description: {

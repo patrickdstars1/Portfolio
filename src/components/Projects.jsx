@@ -103,9 +103,11 @@ function Card({ p, large }) {
         {large && <p className="font-pixel text-[10px] uppercase text-orange">{t.projects.featured}</p>}
         <h3 className={`font-semibold ${large ? 'mt-3 text-2xl md:text-3xl' : 'text-lg'}`}>{pick(p.name)}</h3>
         <p className={`mt-3 text-pretty text-muted ${large ? '' : 'text-[15px]'}`}>{pick(p.description)}</p>
+        {p.tech.length > 0 && (
         <ul className="mt-5 flex flex-wrap gap-2">
           {p.tech.map((x) => <li key={x} className="rounded-md border border-line px-2.5 py-1 font-mono text-xs">{x}</li>)}
         </ul>
+        )}
         <div className="mt-6 pt-1 lg:mt-auto"><div className={large ? 'lg:mt-7' : ''}><Actions p={p} /></div></div>
       </div>
     </article>
