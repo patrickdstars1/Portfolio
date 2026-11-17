@@ -2,6 +2,7 @@
 // Set `url` / `repo` to a real link to show the buttons; leave null to show "link coming soon".
 // Set `image` to a file in /public (e.g. './projects/fleet.png') to replace the abstract preview.
 // Never put placeholder URLs here.
+// `demo: true` marks a link that is only a demo: the card gets a DEMO badge and a note.
 export const projects = [
   {
     id: 'ksher',
@@ -33,15 +34,16 @@ export const projects = [
   {
     id: 'olympus',
     name: { en: 'Olympus Trader app', th: 'Olympus Trader app' },
-    // Only the name is confirmed so far. Add description, tech and links when ready.
+    // The public demo runs on simulated data (the demo itself says so). Technologies are not listed until confirmed.
     description: {
-      en: 'Details coming soon.',
-      th: 'รายละเอียดจะตามมาเร็ว ๆ นี้',
+      en: 'A trading dashboard that tracks account equity, drawdown limits, open trades, the trade log and analytics, in Thai and English.',
+      th: 'แดชบอร์ดสำหรับการเทรด แสดง equity ของพอร์ต ขีดจำกัด drawdown รายการเทรดที่เปิดอยู่ บันทึกการเทรด และ analytics ใช้ได้ทั้งภาษาไทยและอังกฤษ',
     },
     tech: [],
     preview: 'trading',
-    image: null,
-    url: null,
+    demo: true, // the link is a demo with simulated data; the real app cannot be shown
+    image: './projects/olympus.jpg',
+    url: 'https://patrickdstars1.github.io/olympus-demo/',
     repo: null,
   },
   {

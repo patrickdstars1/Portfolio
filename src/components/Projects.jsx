@@ -71,7 +71,7 @@ function Actions({ p }) {
     <div className="flex flex-wrap gap-2.5">
       {p.url && (
         <a href={p.url} target="_blank" rel="noreferrer" className="px-btn inline-flex items-center gap-1.5 bg-sky px-4 py-2 text-sm font-semibold text-on-accent">
-          {P.view}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          {p.demo ? P.viewDemo : P.view}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </a>
       )}
       {p.repo && (
@@ -95,6 +95,7 @@ function Card({ p, large }) {
             <Preview kind={p.preview} large={large} />
           </div>
         )}
+        {p.demo && <span lang="en" className="absolute left-3 top-3 z-10 bg-orange px-2 py-1.5 font-pixel text-[9px] leading-none text-[#10131a]">DEMO</span>}
         {!p.image && large && (
           <span className="absolute bottom-3 left-4 font-mono text-[10px] text-muted">{t.projects.preview}</span>
         )}
@@ -103,6 +104,7 @@ function Card({ p, large }) {
         {large && <p className="font-pixel text-[10px] uppercase text-orange">{t.projects.featured}</p>}
         <h3 className={`font-semibold ${large ? 'mt-3 text-2xl md:text-3xl' : 'text-lg'}`}>{pick(p.name)}</h3>
         <p className={`mt-3 text-pretty text-muted ${large ? '' : 'text-[15px]'}`}>{pick(p.description)}</p>
+        {p.demo && <p className="mt-3 border-l-4 border-orange pl-3 text-sm">{t.projects.demoNote}</p>}
         {p.tech.length > 0 && (
         <ul className="mt-5 flex flex-wrap gap-2">
           {p.tech.map((x) => <li key={x} className="rounded-md border border-line px-2.5 py-1 font-mono text-xs">{x}</li>)}
