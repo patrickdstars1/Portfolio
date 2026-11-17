@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react'
 import { projects } from '../data/projects.js'
 import { useLanguage } from '../hooks/useLanguage.jsx'
+import { useTheme } from '../hooks/useTheme.jsx'
 import Section, { Reveal } from './Section.jsx'
 import { Deco } from './Parallax.jsx'
 import { GithubIcon } from './TechIcon.jsx'
@@ -85,18 +86,20 @@ function Actions({ p }) {
 
 function Card({ p, large }) {
   const { t, pick } = useLanguage()
+  const { theme } = useTheme()
+  const image = p.image && typeof p.image === 'object' ? p.image[theme] : p.image
   return (
     <article className={`px-card group flex h-full flex-col overflow-hidden transition-transform duration-150 hover:-translate-y-1 ${large ? 'lg:flex-row' : ''}`}>
       <div className={`relative border-line bg-bg-2 ${large ? 'border-b-[3px] lg:w-[55%] lg:border-b-0 lg:border-r-[3px]' : 'border-b-[3px]'}`}>
-        {p.image ? (
-          <img src={p.image} alt={pick(p.name)} loading="lazy" className="h-full w-full object-cover object-top" />
+        {image ? (
+          <img src={image} alt={pick(p.name)} loading="lazy" className="h-full w-full object-cover object-top" />
         ) : (
           <div className={`${large ? 'p-6 md:p-10' : 'p-5'} transition-transform duration-500 group-hover:scale-[1.02]`}>
             <Preview kind={p.preview} large={large} />
           </div>
         )}
         {p.demo && <span lang="en" className="absolute left-3 top-3 z-10 bg-orange px-2 py-1.5 font-pixel text-[9px] leading-none text-[#10131a]">DEMO</span>}
-        {!p.image && large && (
+        {!image && large && (
           <span className="absolute bottom-3 left-4 font-mono text-[10px] text-muted">{t.projects.preview}</span>
         )}
       </div>

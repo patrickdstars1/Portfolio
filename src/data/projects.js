@@ -1,6 +1,7 @@
 // Editable project data.
 // Set `url` / `repo` to a real link to show the buttons; leave null to show "link coming soon".
 // Set `image` to a file in /public (e.g. './projects/fleet.png') to replace the abstract preview.
+// `image` can also be { dark, light } to show a screenshot that matches the site's current theme.
 // Never put placeholder URLs here.
 // `demo: true` marks a link that is only a demo: the card gets a DEMO badge and a note.
 export const projects = [
@@ -42,7 +43,7 @@ export const projects = [
     tech: [],
     preview: 'trading',
     demo: true, // the link is a demo with simulated data; the real app cannot be shown
-    image: './projects/olympus.jpg',
+    image: { dark: './projects/olympus-dark.jpg', light: './projects/olympus-light.jpg' }, // shown to match the site's theme
     url: 'https://patrickdstars1.github.io/olympus-demo/',
     repo: null,
   },
