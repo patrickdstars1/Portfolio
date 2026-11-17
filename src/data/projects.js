@@ -4,8 +4,21 @@
 // Never put placeholder URLs here.
 export const projects = [
   {
-    id: 'fleet',
+    id: 'ksher',
     featured: true,
+    name: { en: 'Ksher Thailand website', th: 'เว็บไซต์ Ksher Thailand' },
+    description: {
+      en: 'A full website for Ksher Thailand, a payment solutions provider, built on Wix with custom code.',
+      th: 'เว็บไซต์ฉบับเต็มของ Ksher Thailand ผู้ให้บริการระบบรับชำระเงิน พัฒนาบน Wix ร่วมกับการเขียนโค้ดเพิ่มเติม',
+    },
+    tech: ['Wix', 'Custom code'],
+    preview: 'web',
+    image: './projects/ksher.jpg',
+    url: 'https://ksherthailand.com/',
+    repo: null,
+  },
+  {
+    id: 'fleet',
     name: { en: 'Fleet Management System', th: 'Fleet Management System' },
     description: {
       en: 'A fleet management platform for keeping track of vehicles, mileage, fuel records and maintenance information in one place.',

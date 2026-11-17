@@ -89,7 +89,7 @@ function Card({ p, large }) {
     <article className={`px-card group flex h-full flex-col overflow-hidden transition-transform duration-150 hover:-translate-y-1 ${large ? 'lg:flex-row' : ''}`}>
       <div className={`relative border-line bg-bg-2 ${large ? 'border-b-[3px] lg:w-[55%] lg:border-b-0 lg:border-r-[3px]' : 'border-b-[3px]'}`}>
         {p.image ? (
-          <img src={p.image} alt={pick(p.name)} loading="lazy" className="h-full w-full object-cover" />
+          <img src={p.image} alt={pick(p.name)} loading="lazy" className="h-full w-full object-cover object-top" />
         ) : (
           <div className={`${large ? 'p-6 md:p-10' : 'p-5'} transition-transform duration-500 group-hover:scale-[1.02]`}>
             <Preview kind={p.preview} large={large} />
