@@ -122,7 +122,7 @@ export default function Experience() {
         </div>
         <ol ref={listRef} className="space-y-6">
           {experience.map((item, i) => (
-            <Entry key={item.id} item={item} defaultOpen={i === 0} />
+            <Entry key={item.id} item={item} defaultOpen={i < 2} />
           ))}
         </ol>
       </div>

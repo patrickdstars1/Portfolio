@@ -2,52 +2,13 @@
 // `tech` lists only technologies that are confirmed for that role.
 export const experience = [
   {
-    id: 'inventec',
-    current: true,
-    position: {
-      en: 'Image Shipment Software Engineer (PE)',
-      th: 'Image Shipment Software Engineer (PE)',
-    },
-    company: 'Inventec',
-    place: { en: 'Navanakorn Industrial Zone, Pathum Thani', th: 'เขตอุตสาหกรรมนวนคร ปทุมธานี' },
-    period: { en: 'Mar 2025 – Present', th: 'มี.ค. 2025 – ปัจจุบัน' },
-    focus: {
-      en: ['Software Engineering', 'Production Engineering', 'Troubleshooting', 'Automation'],
-      th: ['Software Engineering', 'Production Engineering', 'Troubleshooting', 'Automation'],
-    },
-    description: {
-      en: 'I look after the software side of the final production stage for notebooks, PCs and mini PCs: the images, the download stations, and the servers behind them. When a software problem stops the line, finding the cause and getting it moving again is my job.',
-      th: 'ดูแลฝั่งซอฟต์แวร์ในขั้นตอนสุดท้ายของการผลิต notebook, PC และ mini PC ตั้งแต่ software image, สถานี download ไปจนถึงเซิร์ฟเวอร์ที่อยู่เบื้องหลัง เมื่อไลน์ผลิตหยุดเพราะปัญหาซอฟต์แวร์ ผมคือคนที่ต้องหาสาเหตุและทำให้ไลน์กลับมาเดินต่อได้',
-    },
-    responsibilities: {
-      en: [
-        'Prepare, download and update software images for every production model.',
-        'Support software deployment for notebooks, PCs and mini PCs.',
-        'Maintain the factory software servers.',
-        'Debug software and production code issues found after tester validation.',
-        'Write automation scripts that replace repetitive manual steps.',
-        'Built automated email notifications for the team.',
-        'Troubleshoot software-related line interruptions so products ship on time.',
-      ],
-      th: [
-        'เตรียม ดาวน์โหลด และอัปเดต software image ของทุกรุ่นที่ผลิต',
-        'ดูแลขั้นตอน software deployment ของ notebook, PC และ mini PC',
-        'ดูแลเซิร์ฟเวอร์ซอฟต์แวร์ของโรงงาน',
-        'Debug ปัญหาซอฟต์แวร์และโค้ดฝั่งการผลิตที่พบหลังผ่าน tester',
-        'เขียนสคริปต์ automation แทนงาน manual ที่ต้องทำซ้ำ ๆ',
-        'สร้างระบบแจ้งเตือนทางอีเมลอัตโนมัติให้ทีม',
-        'แก้ปัญหาไลน์ผลิตหยุดจากซอฟต์แวร์ เพื่อให้ส่งสินค้าได้ตามกำหนด',
-      ],
-    },
-    tech: [],
-  },
-  {
     id: 'freelance',
     freelance: true,
+    current: true, // what Bank is doing now (since leaving Inventec in Apr 2026)
     position: { en: 'Freelance Website Developer', th: 'Freelance Website Developer' },
     company: { en: 'Independent', th: 'งานอิสระ' },
     place: null,
-    period: null, // no confirmed dates
+    period: null, // no confirmed start date
     description: {
       en: 'I build websites for clients, starting from what the business actually needs and ending with a responsive site they can run themselves.',
       th: 'รับพัฒนาเว็บไซต์ให้ลูกค้า โดยเริ่มจากสิ่งที่ธุรกิจต้องการจริง ๆ และจบที่เว็บไซต์ responsive ที่ลูกค้าดูแลต่อเองได้',
@@ -69,6 +30,45 @@ export const experience = [
       ],
     },
     tech: ['React', 'Next.js', 'JavaScript', 'HTML', 'CSS', 'Wix'],
+  },
+  {
+    id: 'inventec',
+    position: {
+      en: 'Image Shipment Software Engineer (PE)',
+      th: 'Image Shipment Software Engineer (PE)',
+    },
+    company: 'Inventec',
+    place: { en: 'Navanakorn Industrial Zone, Pathum Thani', th: 'เขตอุตสาหกรรมนวนคร ปทุมธานี' },
+    period: { en: 'Mar 2025 – Apr 2026', th: 'มี.ค. 2025 – เม.ย. 2026' },
+    focus: {
+      en: ['Software Engineering', 'Production Engineering', 'Troubleshooting', 'Automation'],
+      th: ['Software Engineering', 'Production Engineering', 'Troubleshooting', 'Automation'],
+    },
+    description: {
+      en: 'I looked after the software side of the final production stage for notebooks, PCs and mini PCs: the images, the download stations, and the servers behind them. When a software problem stopped the line, finding the cause and getting it moving again was my job.',
+      th: 'ดูแลฝั่งซอฟต์แวร์ในขั้นตอนสุดท้ายของการผลิต notebook, PC และ mini PC ตั้งแต่ software image, สถานี download ไปจนถึงเซิร์ฟเวอร์ที่อยู่เบื้องหลัง เมื่อไลน์ผลิตหยุดเพราะปัญหาซอฟต์แวร์ ผมคือคนที่ต้องหาสาเหตุและทำให้ไลน์กลับมาเดินต่อได้',
+    },
+    responsibilities: {
+      en: [
+        'Prepared, downloaded and updated software images for every production model.',
+        'Supported software deployment for notebooks, PCs and mini PCs.',
+        'Maintained the factory software servers.',
+        'Debugged software and production code issues found after tester validation.',
+        'Wrote automation scripts that replaced repetitive manual steps.',
+        'Built automated email notifications for the team.',
+        'Troubleshot software-related line interruptions so products shipped on time.',
+      ],
+      th: [
+        'เตรียม ดาวน์โหลด และอัปเดต software image ของทุกรุ่นที่ผลิต',
+        'ดูแลขั้นตอน software deployment ของ notebook, PC และ mini PC',
+        'ดูแลเซิร์ฟเวอร์ซอฟต์แวร์ของโรงงาน',
+        'Debug ปัญหาซอฟต์แวร์และโค้ดฝั่งการผลิตที่พบหลังผ่าน tester',
+        'เขียนสคริปต์ automation แทนงาน manual ที่ต้องทำซ้ำ ๆ',
+        'สร้างระบบแจ้งเตือนทางอีเมลอัตโนมัติให้ทีม',
+        'แก้ปัญหาไลน์ผลิตหยุดจากซอฟต์แวร์ เพื่อให้ส่งสินค้าได้ตามกำหนด',
+      ],
+    },
+    tech: [],
   },
   {
     id: 'skyict',

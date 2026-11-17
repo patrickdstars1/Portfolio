@@ -20,10 +20,10 @@ export const translations = {
       label: 'SOFTWARE ENGINEER / FULL STACK DEVELOPER',
       heading: 'I build software that takes manual work off people’s plates.',
       description:
-        'I’m Bank. By day I keep the software side of a notebook production line running: images, deployment, servers and automation scripts. Outside of that, I build websites for clients.',
+        'I’m Bank. Until recently I kept the software side of a notebook production line running: images, deployment, servers and automation scripts. Now I build websites for clients.',
       ctaWork: 'See my work',
       ctaResume: 'Download resume',
-      available: 'Available for opportunities',
+      available: 'Available for website projects',
       scroll: 'Scroll',
       hint: 'Space or click to jump. Hold to jump higher. Collect the coins!',
       hintTouch: 'Tap to jump. Hold to jump higher. Collect the coins!',
@@ -41,12 +41,12 @@ export const translations = {
         {
           tag: 'AUTOMATION',
           title: 'I automate the boring parts',
-          body: 'At the factory I write scripts that replace repetitive manual steps, and built email notifications so the team hears about things without anyone having to chase.',
+          body: 'At the factory I wrote scripts that replaced repetitive manual steps, and built email notifications so the team hears about things without anyone having to chase.',
         },
         {
           tag: 'TROUBLESHOOTING',
           title: 'I fix things under pressure',
-          body: 'When a software issue stops a production line, every minute counts. I’m used to tracing the cause, fixing it, and getting things moving again.',
+          body: 'When a software issue stops a production line, every minute counts. I got used to tracing the cause, fixing it, and getting things moving again.',
         },
         {
           tag: 'WEB',
@@ -157,10 +157,10 @@ export const translations = {
       label: 'SOFTWARE ENGINEER / FULL STACK DEVELOPER',
       heading: 'ผมสร้างซอฟต์แวร์ที่ช่วยให้คนไม่ต้องทำงานซ้ำ ๆ ด้วยมือ',
       description:
-        'ผมชื่อแบงค์ครับ งานประจำคือดูแลระบบซอฟต์แวร์ของไลน์ผลิต notebook ตั้งแต่ software image, deployment, เซิร์ฟเวอร์ ไปจนถึงสคริปต์ automation นอกเวลางานผมรับทำเว็บไซต์ให้ลูกค้า',
+        'ผมชื่อแบงค์ครับ ที่ผ่านมาผมดูแลระบบซอฟต์แวร์ของไลน์ผลิต notebook ตั้งแต่ software image, deployment, เซิร์ฟเวอร์ ไปจนถึงสคริปต์ automation ตอนนี้ผมรับพัฒนาเว็บไซต์ให้ลูกค้า',
       ctaWork: 'ดูผลงาน',
       ctaResume: 'ดาวน์โหลด Resume',
-      available: 'พร้อมรับโอกาสใหม่',
+      available: 'รับงานพัฒนาเว็บไซต์',
       scroll: 'เลื่อนลง',
       hint: 'กด Spacebar หรือคลิกเพื่อกระโดด กดค้างเพื่อโดดสูงขึ้น แล้วเก็บเหรียญให้ได้!',
       hintTouch: 'แตะเพื่อกระโดด แตะค้างเพื่อโดดสูงขึ้น แล้วเก็บเหรียญให้ได้!',
