@@ -5,6 +5,7 @@ import { useTheme } from '../hooks/useTheme.jsx'
 import Section, { Reveal } from './Section.jsx'
 import { Deco } from './Parallax.jsx'
 import { GithubIcon } from './TechIcon.jsx'
+import LiveStats from './LiveStats.jsx'
 
 // Abstract previews used until real screenshots are added (set `image` in data/projects.js).
 function Preview({ kind, large }) {
@@ -138,6 +139,7 @@ function Card({ p, large }) {
           {p.tech.map((x) => <li key={x} className="rounded-md border border-line px-2.5 py-1 font-mono text-xs">{x}</li>)}
         </ul>
         )}
+        {p.liveStats && <LiveStats />}
         <div className="mt-6 pt-1 lg:mt-auto"><div className={large ? 'lg:mt-7' : ''}><Actions p={p} /></div></div>
       </div>
     </article>
@@ -152,7 +154,7 @@ export default function Projects() {
     <Section id="projects" level="04" title={t.projects.title} subtitle={t.projects.subtitle} className="bg-bg-2" deco={<><Deco kind="cartridge" speed={0.3} tilt={-5} className="right-[2.5%] top-28" /><Deco kind="code" speed={-0.2} tilt={7} delay={1} className="left-[2%] top-[60%]" /></>}>
       <div className="space-y-6">
         {featured.map((p) => <Reveal key={p.id}><Card p={p} large /></Reveal>)}
-        <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul className={`grid gap-6 md:grid-cols-2 ${rest.length > 2 ? 'lg:grid-cols-3' : ''}`}>
           {rest.map((p, i) => <Reveal as="li" key={p.id} delay={i * 70}><Card p={p} /></Reveal>)}
         </ul>
       </div>

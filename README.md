@@ -31,3 +31,21 @@ The resume PDF is `public/resume/Patcharapon_Khongmod_Resume.pdf`.
 - `src/lib/achievements.js`, `src/components/Achievements.jsx` — achievements unlocked by exploring the site (list and rules are in the first file)
 - `src/components/Mascot.jsx` — "Byte", the mascot that follows the pointer (sprite in `src/lib/pixel.js`)
 - `src/hooks/`, `src/lib/` — language, theme, routing, scroll and sound helpers
+
+## Follower counts
+
+The AI clip pages card shows follower counts that refresh automatically.
+
+- `src/data/socials.js` lists the accounts (platform, ID, and the name of the secret that holds its token).
+- `scripts/fetch-stats.mjs` calls each platform's API and writes `public/stats.json`.
+- `.github/workflows/deploy.yml` runs that script before every build, and also on a schedule (every 30 minutes), then redeploys the site. The page re-reads `stats.json` every 5 minutes while it is open.
+- Accounts without a token (or whose API call fails) keep their previous number, so the page never shows zeros. With no data at all the box is hidden.
+
+Add the tokens in the repository: Settings, Secrets and variables, Actions, New repository secret.
+
+| Secret | Used for |
+| --- | --- |
+| `FB_TOKEN_ABYSS` | Page access token for Abyss Files |
+| `FB_TOKEN_XENO` | Page access token for Xeno Atlas |
+
+To show TikTok, YouTube or Instagram too, add an entry to `socials.js` (platform, ID, a new `tokenEnv`) and pass that secret to the "Refresh follower counts" step in the workflow.

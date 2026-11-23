@@ -2,6 +2,7 @@
 // Set `url` / `repo` to a real link to show the buttons; leave null to show "link coming soon".
 // Set `image` to a file in /public (e.g. './projects/fleet.png') to replace the abstract preview.
 // `image` can also be { dark, light } to show a screenshot that matches the site's current theme.
+// Only add a project once there is something real to show (a live link, demo or screenshot).
 // Never put placeholder URLs here.
 // `links` is a list of { label: {en, th}, url } for projects with more than one public link.
 // `demo: true` marks a link that is only a demo: the card gets a DEMO badge and a note.
@@ -28,6 +29,7 @@ export const projects = [
       th: 'เพจ AI สองเพจ คือ Abyss Files และ Xeno Atlas ที่โพสต์คลิปสั้นลง TikTok, YouTube, Instagram และ Facebook อัตโนมัติ ทุกโพสต์ส่งผ่าน API ของแต่ละแพลตฟอร์มโดยไม่ต้องอัปโหลดเอง เพจใช้งานจริงและมีผู้ชมติดตาม',
     },
     tech: ['AI', 'Automation', 'APIs', 'TikTok', 'YouTube', 'Instagram', 'Facebook'],
+    liveStats: true, // shows follower counts from stats.json (see src/data/socials.js)
     preview: 'social',
     image: null,
     url: null,
@@ -37,19 +39,6 @@ export const projects = [
       { label: { en: 'Abyss Files · Facebook', th: 'Abyss Files · Facebook' }, url: 'https://www.facebook.com/profile.php?id=61595622583527&sk=reels_tab' },
       { label: { en: 'Xeno Atlas · Facebook', th: 'Xeno Atlas · Facebook' }, url: 'https://www.facebook.com/profile.php?id=61595514497855' },
     ],
-  },
-  {
-    id: 'fleet',
-    name: { en: 'Fleet Management System', th: 'Fleet Management System' },
-    description: {
-      en: 'A fleet management platform for keeping track of vehicles, mileage, fuel records and maintenance information in one place.',
-      th: 'แพลตฟอร์มจัดการยานพาหนะ สำหรับเก็บข้อมูลรถ ระยะทาง บันทึกการเติมน้ำมัน และการซ่อมบำรุงไว้ในที่เดียว',
-    },
-    tech: ['React', 'Vite', 'FastAPI', 'PostgreSQL', 'SQLAlchemy'],
-    preview: 'fleet',
-    image: null,
-    url: null,
-    repo: null,
   },
   {
     id: 'olympus',
@@ -64,32 +53,6 @@ export const projects = [
     demo: true, // the link is a demo with simulated data; the real app cannot be shown
     image: { dark: './projects/olympus-dark.jpg', light: './projects/olympus-light.jpg' }, // shown to match the site's theme
     url: 'https://patrickdstars1.github.io/olympus-demo/',
-    repo: null,
-  },
-  {
-    id: 'web',
-    name: { en: 'Websites for clients', th: 'เว็บไซต์สำหรับลูกค้า' },
-    description: {
-      en: 'Responsive interfaces, landing pages and business websites built through freelance work.',
-      th: 'งาน responsive interface, landing page และเว็บไซต์ธุรกิจจากงาน freelance',
-    },
-    tech: ['React', 'Next.js', 'JavaScript', 'HTML', 'CSS', 'Wix'],
-    preview: 'web',
-    image: null,
-    url: null,
-    repo: null,
-  },
-  {
-    id: 'trading',
-    name: { en: 'Software & trading experiments', th: 'งานทดลองด้านซอฟต์แวร์และการเทรด' },
-    description: {
-      en: 'Experimental projects around backend development, trading-related automation and API integrations.',
-      th: 'โปรเจกต์ทดลองเกี่ยวกับ backend, automation ด้านการเทรด และการเชื่อมต่อ API',
-    },
-    tech: ['Python', 'PHP', 'APIs'],
-    preview: 'trading',
-    image: null,
-    url: null,
     repo: null,
   },
 ]

@@ -82,7 +82,7 @@ export const translations = {
     },
     projects: {
       title: 'Projects',
-      subtitle: 'A few things I’ve built or am building. Links and screenshots are being added.',
+      subtitle: 'Selected work you can open and look at.',
       view: 'View project',
       viewDemo: 'View demo',
       demoNote: 'This is a demo with simulated data. The real app can’t be shown publicly.',
@@ -90,6 +90,7 @@ export const translations = {
       soon: 'Link coming soon',
       preview: 'Illustrative preview — screenshot coming',
       featured: 'Featured',
+      stats: { followers: 'followers', total: 'Total followers', updated: 'Updated', justNow: 'just now', minAgo: 'min ago', hourAgo: 'h ago', dayAgo: 'days ago' },
     },
     lab: {
       eyebrow: 'BONUS STAGE',
@@ -221,7 +222,7 @@ export const translations = {
     },
     projects: {
       title: 'ผลงาน',
-      subtitle: 'ส่วนหนึ่งของสิ่งที่ผมสร้างและกำลังสร้าง ลิงก์และภาพหน้าจอกำลังทยอยเพิ่ม',
+      subtitle: 'ผลงานที่เปิดดูได้จริง',
       view: 'ดูโปรเจกต์',
       viewDemo: 'ดูเดโม',
       demoNote: 'นี่เป็นเดโมที่ใช้ข้อมูลจำลอง ตัวจริงไม่สามารถเปิดให้ดูได้',
@@ -229,6 +230,7 @@ export const translations = {
       soon: 'ลิงก์จะตามมาเร็ว ๆ นี้',
       preview: 'ภาพประกอบ — ภาพหน้าจอจริงจะตามมา',
       featured: 'ผลงานเด่น',
+      stats: { followers: 'ผู้ติดตาม', total: 'ผู้ติดตามรวม', updated: 'อัปเดต', justNow: 'เมื่อสักครู่', minAgo: 'นาทีที่แล้ว', hourAgo: 'ชั่วโมงที่แล้ว', dayAgo: 'วันที่แล้ว' },
     },
     lab: {
       eyebrow: 'BONUS STAGE',

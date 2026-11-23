@@ -4,6 +4,10 @@ on:
   push:
     branches: [main, claude/magical-gauss-4udqyk]
   workflow_dispatch:
+  # Rebuild every 30 minutes so the follower counts on the site stay fresh.
+  # (GitHub runs schedules from the default branch only.)
+  schedule:
+    - cron: '*/30 * * * *'
 
 permissions:
   contents: read
@@ -24,6 +28,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Follower counts. Tokens are repository secrets; accounts without a token keep their previous value.
+      - name: Refresh follower counts
+        run: node scripts/fetch-stats.mjs
+        env:
+          SITE_URL: https://patrickdstars1.github.io/Portfolio
+          FB_TOKEN_ABYSS: ${{ secrets.FB_TOKEN_ABYSS }}
+          FB_TOKEN_XENO: ${{ secrets.FB_TOKEN_XENO }}
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
