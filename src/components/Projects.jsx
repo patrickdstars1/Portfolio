@@ -44,6 +44,25 @@ function Preview({ kind, large }) {
         <path d="M30 90h20M112 50h16M112 130h16M192 90h16M272 90h16" stroke="var(--muted)" strokeWidth="2" strokeLinecap="round" opacity=".6" />
       </>
     ),
+    social: (
+      <>
+        {/* a clip phone feeding four platform nodes */}
+        <rect x="40" y="26" width="64" height="128" rx="8" {...s} />
+        <rect x="48" y="40" width="48" height="84" rx="3" fill="var(--line)" opacity=".5" />
+        <path d="M64 70 L64 94 L84 82 Z" fill="var(--orange)" />
+        <rect x="52" y="132" width="40" height="5" rx="2" fill="var(--sky)" opacity=".8" />
+        <path d="M110 90 H150" stroke="var(--muted)" strokeWidth="2" strokeDasharray="3 4" />
+        <path d="M150 90 V45 M150 90 V72 M150 90 V108 M150 90 V135" stroke="var(--line)" strokeWidth="1.5" fill="none" />
+        {[45, 72, 108, 135].map((y, i) => (
+          <g key={y}>
+            <path d={`M150 ${y} H190`} stroke="var(--muted)" strokeWidth="1.5" strokeDasharray="3 4" />
+            <rect x="190" y={y - 13} width="76" height="26" rx="4" {...s} />
+            <circle cx="203" cy={y} r="5" fill={i % 2 ? 'var(--orange)' : 'var(--sky)'} />
+            <rect x="214" y={y - 3} width={[40, 34, 30, 38][i]} height="6" rx="2" fill="var(--muted)" opacity=".55" />
+          </g>
+        ))}
+      </>
+    ),
     trading: (
       <>
         <path d="M24 150h272M24 110h272M24 70h272M24 30h272" stroke="var(--line)" strokeWidth="1" strokeDasharray="2 5" />
@@ -63,9 +82,10 @@ function Preview({ kind, large }) {
 }
 
 function Actions({ p }) {
-  const { t } = useLanguage()
+  const { t, pick } = useLanguage()
   const P = t.projects
-  if (!p.url && !p.repo) {
+  const links = p.links || []
+  if (!p.url && !p.repo && !links.length) {
     return <span className="inline-flex items-center rounded-md border border-dashed border-line px-3 py-1.5 font-mono text-xs text-muted">{P.soon}</span>
   }
   return (
@@ -75,6 +95,11 @@ function Actions({ p }) {
           {p.demo ? P.viewDemo : P.view}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </a>
       )}
+      {links.map((l) => (
+        <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="px-btn inline-flex items-center gap-1.5 bg-sky px-4 py-2 text-sm font-semibold text-on-accent">
+          {pick(l.label)}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+        </a>
+      ))}
       {p.repo && (
         <a href={p.repo} target="_blank" rel="noreferrer" className="px-btn inline-flex items-center gap-2 bg-card px-4 py-2 text-sm font-semibold">
           <GithubIcon className="h-4 w-4" />{P.repo}
