@@ -24,18 +24,18 @@ export const projects = [
     id: 'aipages',
     name: { en: 'AI clip pages with auto-posting', th: 'เพจ AI และระบบโพสต์คลิปอัตโนมัติ' },
     description: {
-      en: 'AI-themed pages whose short clips are published automatically to TikTok, YouTube, Instagram and Facebook. Every post goes out through each platform’s API, with no manual uploading. The pages are live and have an audience.',
-      th: 'เพจ AI ที่โพสต์คลิปสั้นลง TikTok, YouTube, Instagram และ Facebook อัตโนมัติ ทุกโพสต์ส่งผ่าน API ของแต่ละแพลตฟอร์มโดยไม่ต้องอัปโหลดเอง เพจใช้งานจริงและมีผู้ชมติดตาม',
+      en: 'Two AI-themed pages, Abyss Files and Xeno Atlas, whose short clips are published automatically to TikTok, YouTube, Instagram and Facebook. Every post goes out through each platform’s API, with no manual uploading. The pages are live and have an audience.',
+      th: 'เพจ AI สองเพจ คือ Abyss Files และ Xeno Atlas ที่โพสต์คลิปสั้นลง TikTok, YouTube, Instagram และ Facebook อัตโนมัติ ทุกโพสต์ส่งผ่าน API ของแต่ละแพลตฟอร์มโดยไม่ต้องอัปโหลดเอง เพจใช้งานจริงและมีผู้ชมติดตาม',
     },
     tech: ['AI', 'Automation', 'APIs', 'TikTok', 'YouTube', 'Instagram', 'Facebook'],
     preview: 'social',
     image: null,
     url: null,
     repo: null,
-    // Several public links: one button each. Names are placeholders until the pages are named.
+    // Several public links: one button each. Order and names as given: page 1 = Abyss Files, page 2 = Xeno Atlas.
     links: [
-      { label: { en: 'Facebook page 1', th: 'เพจ Facebook 1' }, url: 'https://www.facebook.com/profile.php?id=61595622583527&sk=reels_tab' },
-      { label: { en: 'Facebook page 2', th: 'เพจ Facebook 2' }, url: 'https://www.facebook.com/profile.php?id=61595514497855' },
+      { label: { en: 'Abyss Files · Facebook', th: 'Abyss Files · Facebook' }, url: 'https://www.facebook.com/profile.php?id=61595622583527&sk=reels_tab' },
+      { label: { en: 'Xeno Atlas · Facebook', th: 'Xeno Atlas · Facebook' }, url: 'https://www.facebook.com/profile.php?id=61595514497855' },
     ],
   },
   {
