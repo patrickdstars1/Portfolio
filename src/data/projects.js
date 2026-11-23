@@ -5,6 +5,7 @@
 // Only add a project once there is something real to show (a live link, demo or screenshot).
 // Never put placeholder URLs here.
 // `links` is a list of { label: {en, th}, url } for projects with more than one public link.
+// `details` ({ title, steps[] }) adds a numbered "how it works" box to the card.
 // `demo: true` marks a link that is only a demo: the card gets a DEMO badge and a note.
 export const projects = [
   {
@@ -25,10 +26,20 @@ export const projects = [
     id: 'aipages',
     name: { en: 'AI clip pages with auto-posting', th: 'เพจ AI และระบบโพสต์คลิปอัตโนมัติ' },
     description: {
-      en: 'Two AI-themed pages, Abyss Files and Xeno Atlas, whose short clips are published automatically to TikTok, YouTube, Instagram and Facebook. Every post goes out through each platform’s API, with no manual uploading. The pages are live and have an audience.',
-      th: 'เพจ AI สองเพจ คือ Abyss Files และ Xeno Atlas ที่โพสต์คลิปสั้นลง TikTok, YouTube, Instagram และ Facebook อัตโนมัติ ทุกโพสต์ส่งผ่าน API ของแต่ละแพลตฟอร์มโดยไม่ต้องอัปโหลดเอง เพจใช้งานจริงและมีผู้ชมติดตาม',
+      en: 'Two AI-themed pages, Abyss Files and Xeno Atlas, whose short clips are published automatically to TikTok, YouTube, Instagram and Facebook. The pages are live and have an audience.',
+      th: 'เพจ AI สองเพจ คือ Abyss Files และ Xeno Atlas ที่โพสต์คลิปสั้นลง TikTok, YouTube, Instagram และ Facebook อัตโนมัติ เพจใช้งานจริงและมีผู้ชมติดตาม',
     },
-    tech: ['AI', 'Automation', 'APIs', 'TikTok', 'YouTube', 'Instagram', 'Facebook'],
+    // How the auto-poster works (shown as a numbered list on the card).
+    details: {
+      title: { en: 'How the auto-poster works', th: 'ระบบโพสต์อัตโนมัติทำงานอย่างไร' },
+      steps: [
+        { en: 'A set of Python scripts that I wrote.', th: 'ชุดสคริปต์ Python ที่ผมเขียนเอง' },
+        { en: 'It takes one clip file with a title and a caption.', th: 'รับคลิป 1 ไฟล์ พร้อมชื่อและแคปชั่น' },
+        { en: 'A single command publishes it to every platform.', th: 'คำสั่งเดียวส่งขึ้นทุกแพลตฟอร์ม' },
+        { en: 'It calls each platform’s official API directly: no middleman service, and no opening the website to upload by hand.', th: 'เรียก API ทางการของแต่ละแพลตฟอร์มโดยตรง ไม่ผ่านบริการตัวกลาง และไม่ต้องเปิดเว็บมาอัปโหลดเอง' },
+      ],
+    },
+    tech: ['Python', 'Automation', 'Official APIs', 'TikTok', 'YouTube', 'Instagram', 'Facebook'],
     liveStats: true, // shows follower counts from stats.json (see src/data/socials.js)
     preview: 'social',
     image: null,

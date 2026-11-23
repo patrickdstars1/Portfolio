@@ -134,6 +134,19 @@ function Card({ p, large }) {
         <h3 className={`font-semibold ${large ? 'mt-3 text-2xl md:text-3xl' : 'text-lg'}`}>{pick(p.name)}</h3>
         <p className={`mt-3 text-pretty text-muted ${large ? '' : 'text-[15px]'}`}>{pick(p.description)}</p>
         {p.demo && <p className="mt-3 border-l-4 border-orange pl-3 text-sm">{t.projects.demoNote}</p>}
+        {p.details && (
+          <div className="mt-4 border-2 border-dashed border-line p-3.5">
+            <p className="font-pixel text-[9px] leading-relaxed text-orange">{pick(p.details.title)}</p>
+            <ol className="mt-3 space-y-2">
+              {p.details.steps.map((step, i) => (
+                <li key={i} className="flex gap-2.5 text-sm">
+                  <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center bg-sky font-mono text-[11px] font-bold leading-none text-on-accent">{i + 1}</span>
+                  <span>{pick(step)}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
         {p.tech.length > 0 && (
         <ul className="mt-5 flex flex-wrap gap-2">
           {p.tech.map((x) => <li key={x} className="rounded-md border border-line px-2.5 py-1 font-mono text-xs">{x}</li>)}
