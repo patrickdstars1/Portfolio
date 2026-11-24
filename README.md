@@ -30,6 +30,7 @@ The resume PDF is `public/resume/Patcharapon_Khongmod_Resume.pdf`.
 - `src/lib/pixelScene.js`, `src/lib/parallax.js` — procedural pixel-art scenery and the parallax engine
 - `src/lib/achievements.js`, `src/components/Achievements.jsx` — achievements unlocked by exploring the site (list and rules are in the first file)
 - `src/components/Mascot.jsx` — "Byte", the mascot that follows the pointer (sprite in `src/lib/pixel.js`)
+- `demos/`, `src/demos/` — two stand-alone demo tools (PromptPay QR Maker, Line Stop Analyzer), each its own page in the build
 - `src/hooks/`, `src/lib/` — language, theme, routing, scroll and sound helpers
 
 ## Follower counts
@@ -49,3 +50,10 @@ Add the tokens in the repository: Settings, Secrets and variables, Actions, New 
 | `FB_TOKEN_XENO` | Page access token for Xeno Atlas |
 
 To show TikTok, YouTube or Instagram too, add an entry to `socials.js` (platform, ID, a new `tokenEnv`) and pass that secret to the "Refresh follower counts" step in the workflow.
+
+## Demo tools
+
+`demos/promptpay` and `demos/linestop` are separate pages (see `build.rollupOptions.input` in `vite.config.js`) that share the site's theme, language and fonts through `src/demos/shared/`.
+
+- The logic lives in plain functions you can test without a browser: `src/demos/promptpay/emv.js` (Thai QR Payment payload and CRC-16) and `src/demos/linestop/analyze.js` (CSV parsing and statistics).
+- Both run entirely in the browser with sample data. Nothing is uploaded or stored.

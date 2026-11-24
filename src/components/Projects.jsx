@@ -133,7 +133,7 @@ function Card({ p, large }) {
         {large && <p className="font-pixel text-[10px] uppercase text-orange">{t.projects.featured}</p>}
         <h3 className={`font-semibold ${large ? 'mt-3 text-2xl md:text-3xl' : 'text-lg'}`}>{pick(p.name)}</h3>
         <p className={`mt-3 text-pretty text-muted ${large ? '' : 'text-[15px]'}`}>{pick(p.description)}</p>
-        {p.demo && <p className="mt-3 border-l-4 border-orange pl-3 text-sm">{t.projects.demoNote}</p>}
+        {p.demo && <p className="mt-3 border-l-4 border-orange pl-3 text-sm">{p.note ? pick(p.note) : t.projects.demoNote}</p>}
         {p.details && (
           <div className="mt-4 border-2 border-dashed border-line p-3.5">
             <p className="font-pixel text-[9px] leading-relaxed text-orange">{pick(p.details.title)}</p>
@@ -167,7 +167,7 @@ export default function Projects() {
     <Section id="projects" level="04" title={t.projects.title} subtitle={t.projects.subtitle} className="bg-bg-2" deco={<><Deco kind="cartridge" speed={0.3} tilt={-5} className="right-[2.5%] top-28" /><Deco kind="code" speed={-0.2} tilt={7} delay={1} className="left-[2%] top-[60%]" /></>}>
       <div className="space-y-6">
         {featured.map((p) => <Reveal key={p.id}><Card p={p} large /></Reveal>)}
-        <ul className={`grid gap-6 md:grid-cols-2 ${rest.length > 2 ? 'lg:grid-cols-3' : ''}`}>
+        <ul className={`grid gap-6 md:grid-cols-2 ${rest.length === 3 || rest.length > 4 ? 'lg:grid-cols-3' : ''}`}>
           {rest.map((p, i) => <Reveal as="li" key={p.id} delay={i * 70}><Card p={p} /></Reveal>)}
         </ul>
       </div>

@@ -6,7 +6,8 @@
 // Never put placeholder URLs here.
 // `links` is a list of { label: {en, th}, url } for projects with more than one public link.
 // `details` ({ title, steps[] }) adds a numbered "how it works" box to the card.
-// `demo: true` marks a link that is only a demo: the card gets a DEMO badge and a note.
+// `demo: true` marks a link that is only a demo: the card gets a DEMO badge and a note
+// (`note: { en, th }` replaces the default note, which says the real app cannot be shown).
 export const projects = [
   {
     id: 'ksher',
@@ -64,6 +65,42 @@ export const projects = [
     demo: true, // the link is a demo with simulated data; the real app cannot be shown
     image: { dark: './projects/olympus-dark.jpg', light: './projects/olympus-light.jpg' }, // shown to match the site's theme
     url: 'https://patrickdstars1.github.io/olympus-demo/',
+    repo: null,
+  },
+  {
+    id: 'promptpay',
+    name: { en: 'PromptPay QR Maker', th: 'เครื่องมือสร้าง QR PromptPay' },
+    description: {
+      en: 'A web tool that turns a phone number or ID and an amount into a scannable PromptPay QR, with checksum validation.',
+      th: 'เว็บเครื่องมือแปลงเบอร์หรือเลขบัตรและจำนวนเงินเป็น QR PromptPay ที่สแกนได้ พร้อมตรวจ checksum',
+    },
+    demo: true,
+    note: {
+      en: 'Interactive demo with sample data. It runs in your browser; nothing is uploaded.',
+      th: 'เดโมใช้งานได้จริงด้วยข้อมูลตัวอย่าง ทำงานในเบราว์เซอร์ ไม่มีการอัปโหลดข้อมูล',
+    },
+    tech: ['React', 'JavaScript', 'Thai QR Payment', 'AI-assisted development'],
+    preview: 'web',
+    image: { dark: './projects/promptpay-dark.jpg', light: './projects/promptpay-light.jpg' },
+    url: './demos/promptpay/',
+    repo: null,
+  },
+  {
+    id: 'linestop',
+    name: { en: 'Line Stop Analyzer', th: 'ตัววิเคราะห์ไลน์ผลิตหยุด' },
+    description: {
+      en: 'Upload a production-line stop log and get downtime by cause and station, repair times, a stop timeline and a summary to send.',
+      th: 'อัปโหลด log การหยุดของไลน์ผลิต แล้วได้ downtime แยกตามสาเหตุและสถานี เวลาซ่อม ไทม์ไลน์ และสรุปพร้อมส่ง',
+    },
+    demo: true,
+    note: {
+      en: 'Interactive demo with synthetic sample data. It runs in your browser; nothing is uploaded.',
+      th: 'เดโมใช้งานได้จริงด้วยข้อมูลตัวอย่างที่สร้างขึ้นเอง ทำงานในเบราว์เซอร์ ไม่มีการอัปโหลดข้อมูล',
+    },
+    tech: ['React', 'JavaScript', 'Data analysis', 'AI-assisted development'],
+    preview: 'automation',
+    image: { dark: './projects/linestop-dark.jpg', light: './projects/linestop-light.jpg' },
+    url: './demos/linestop/',
     repo: null,
   },
 ]
